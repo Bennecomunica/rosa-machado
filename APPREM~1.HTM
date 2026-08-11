@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Colégio Rosa Machado • Rematrícula</title>
+<style>
+  :root{
+    --bg:#f4f6fb; --panel:#ffffff; --ink:#1f2740; --muted:#6b7385;
+    --line:#e6e9f2; --primary:#14224f; --primary-d:#0d1838; --primary-l:#e8ebf4;
+    --brand:#a70409; --brand-d:#8a0307; --brand-l:#fbe7e8;
+    --green:#16a37b; --green-l:#e4f6ef; --amber:#e0a022; --amber-l:#fbf1dc;
+    --red:#e05353; --red-l:#fbe6e6; --shadow:0 8px 30px rgba(31,39,64,.08);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;
+    background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45}
+  button{font-family:inherit;cursor:pointer;border:none;border-radius:9px;font-size:13px;font-weight:600}
+  input,select,textarea{font-family:inherit;font-size:13px;border:1px solid var(--line);
+    border-radius:9px;padding:9px 11px;width:100%;background:#fff;color:var(--ink)}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary);
+    box-shadow:0 0 0 3px var(--primary-l)}
+  .hidden{display:none!important}
+
+  /* Header */
+  header{background:linear-gradient(135deg,#8a0307,#a70409 55%,#c11424);color:#fff;
+    padding:18px 26px;box-shadow:var(--shadow);position:sticky;top:0;z-index:20}
+  .hrow{display:flex;align-items:center;gap:16px;flex-wrap:wrap;max-width:1400px;margin:0 auto}
+  .logo{width:48px;height:48px;border-radius:50%;background:#fff;overflow:hidden;
+    display:grid;place-items:center;flex-shrink:0;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+  .logo img{width:100%;height:100%;object-fit:cover;display:block}
+  .htitle b{font-size:17px;display:block;letter-spacing:.2px}
+  .htitle span{font-size:12px;opacity:.85}
+  .hspace{flex:1}
+  .hbtn{background:rgba(255,255,255,.15);color:#fff;padding:9px 14px;display:inline-flex;
+    align-items:center;gap:7px}
+  .hbtn:hover{background:rgba(255,255,255,.28)}
+  .hbtn.solid{background:#fff;color:var(--primary-d)}
+  .hbtn.solid:hover{background:#f0f1ff}
+
+  /* Layout */
+  .shell{max-width:1460px;margin:0 auto;display:flex;align-items:flex-start}
+  .wrap{flex:1;min-width:0;padding:22px 26px 60px}
+  .sidebar{position:sticky;top:88px;flex-shrink:0;width:216px;padding:22px 8px 22px 22px}
+  .navmenu{display:flex;flex-direction:column;gap:5px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:10px;box-shadow:var(--shadow)}
+  .navitem{display:flex;align-items:center;gap:11px;padding:11px 14px;border-radius:10px;background:transparent;color:var(--muted);font-size:14px;font-weight:600;text-align:left;width:100%}
+  .navitem .ni{font-size:17px;width:20px;text-align:center}
+  .navitem:hover{background:#f2f4fb;color:var(--ink)}
+  .navitem.active{background:var(--primary);color:#fff}
+  .navsep{height:1px;background:var(--line);margin:9px 4px}
+  .navlabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:2px 14px 4px}
+  .navact{display:flex;align-items:center;gap:11px;padding:10px 14px;border-radius:10px;background:transparent;color:var(--ink);font-size:13.5px;font-weight:600;text-align:left;width:100%}
+  .navact .ni{font-size:16px;width:20px;text-align:center}
+  .navact:hover{background:#f2f4fb}
+  .navact.accent{background:var(--brand);color:#fff}
+  .navact.accent:hover{background:var(--brand-d)}
+  @media(max-width:820px){
+    .shell{flex-direction:column}
+    .sidebar{position:static;top:auto;width:auto;padding:16px 16px 0}
+    .navmenu{flex-direction:row;flex-wrap:wrap}
+    .navitem{flex:1;justify-content:center;min-width:96px}
+    .navlabel{display:none}.navsep{width:100%}
+    .navact{flex:1;justify-content:center;min-width:130px}
+  }
+
+  /* KPIs */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:20px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:15px 18px;box-shadow:var(--shadow)}
+  .kpi .lbl{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+  .kpi .val{font-size:26px;font-weight:800;margin-top:4px}
+  .kpi .val.money{font-size:22px}
+  .kpi.g .val{color:var(--green)} .kpi.a .val{color:var(--amber)} .kpi.p .val{color:var(--primary)}
+
+  /* Tabs + toolbar */
+  .bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+  .tabs{display:inline-flex;background:#e9ecf6;border-radius:11px;padding:4px}
+  .tab{background:transparent;color:var(--muted);padding:9px 20px;border-radius:8px;display:inline-flex;align-items:center;gap:7px}
+  .tab.active{background:#fff;color:var(--primary-d);box-shadow:0 2px 8px rgba(31,39,64,.1)}
+  .grow{flex:1}
+  .toolbtn{background:#fff;border:1px solid var(--line);color:var(--ink);padding:9px 14px;display:inline-flex;align-items:center;gap:7px}
+  .toolbtn:hover{border-color:var(--primary);color:var(--primary-d)}
+  .btn-primary{background:var(--primary);color:#fff;padding:10px 16px;display:inline-flex;align-items:center;gap:7px}
+  .btn-primary:hover{background:var(--primary-d)}
+  .searchbox{position:relative;min-width:220px;flex:1;max-width:340px}
+  .searchbox input{padding-left:34px}
+  .searchbox svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);opacity:.5}
+
+  /* Table */
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);
+    padding:13px 14px;border-bottom:1px solid var(--line);background:#fafbfe;white-space:nowrap}
+  td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:#fafbff}
+  .stu-name{font-weight:700}
+  .stu-sub{font-size:12px;color:var(--muted)}
+  .mens-edit{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--line);border-radius:8px;padding:0 8px;background:#fff;transition:border-color .15s,box-shadow .15s;max-width:130px}
+  .mens-edit:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-l)}
+  .mens-cur{color:var(--muted);font-size:12px;font-weight:600}
+  .mens-inp{border:none;padding:7px 2px;width:100%;font-weight:700;color:var(--ink);background:transparent}
+  .mens-inp:focus{outline:none;box-shadow:none}
+  .mens-inp::-webkit-outer-spin-button,.mens-inp::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap}
+  .rowacts{display:flex;gap:6px;justify-content:flex-end}
+  .iconbtn{width:32px;height:32px;display:grid;place-items:center;background:#f2f4fb;color:var(--muted);border-radius:8px;padding:0}
+  .iconbtn:hover{background:var(--primary-l);color:var(--primary-d)}
+  .iconbtn.doc:hover{background:var(--green-l);color:var(--green)}
+  .iconbtn.wa:hover{background:var(--green-l);color:var(--green)}
+  .iconbtn.del:hover{background:var(--red-l);color:var(--red)}
+  .empty{padding:60px 20px;text-align:center;color:var(--muted)}
+  .empty b{display:block;color:var(--ink);font-size:16px;margin-bottom:6px}
+
+  /* Dashboard */
+  .dashcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:16px}
+  .dashmini{padding:16px 18px}
+  .dm-lbl{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+  .dm-val{font-size:24px;font-weight:800;margin:4px 0 2px}
+  .dashgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .dashcard{padding:18px}
+  .dashcard.wide{grid-column:1/-1}
+  .dashtitle{font-weight:700;font-size:14px;margin-bottom:16px;color:var(--ink)}
+  .donutwrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .legend{display:flex;flex-direction:column;gap:7px;font-size:13px}
+  .lg{display:flex;align-items:center;gap:7px}
+  .lgdot{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+  .barchart{display:flex;align-items:flex-end;gap:14px;height:230px;padding-top:22px}
+  .barcol{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;flex:1;min-width:0}
+  .barcol .bar{width:70%;max-width:46px;background:linear-gradient(180deg,#14224f,#2c3f7a);border-radius:6px 6px 0 0}
+  .barval{font-weight:700;font-size:13px;color:var(--ink)}
+  .barlbl{font-size:11px;color:var(--muted);text-align:center;line-height:1.2}
+  .funil{display:flex;flex-direction:column;gap:12px}
+  .funrow{display:grid;grid-template-columns:190px 1fr 90px;align-items:center;gap:12px}
+  .funlbl{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
+  .funbar{background:#eef0f7;border-radius:999px;height:22px;overflow:hidden}
+  .funfill{height:100%;border-radius:999px;transition:width .4s}
+  .funn{text-align:right;font-size:14px}
+  @media(max-width:760px){.dashgrid{grid-template-columns:1fr}.funrow{grid-template-columns:130px 1fr 70px;gap:8px}.funlbl{font-size:12px}}
+
+  /* Kanban */
+  .kanban{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(240px,1fr);gap:14px;overflow-x:auto;padding-bottom:10px}
+  .kcol{background:#eef0f7;border-radius:var(--radius);display:flex;flex-direction:column;min-height:200px}
+  .kcol.drag{outline:2px dashed var(--primary);background:var(--primary-l)}
+  .khead{padding:12px 14px;font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px;border-bottom:2px solid transparent}
+  .kdot{width:10px;height:10px;border-radius:50%}
+  .kcount{margin-left:auto;background:#fff;color:var(--muted);border-radius:999px;padding:1px 9px;font-size:12px;font-weight:700}
+  .kbody{padding:10px;display:flex;flex-direction:column;gap:10px;flex:1}
+  .kcard{background:#fff;border:1px solid var(--line);border-radius:11px;padding:12px;box-shadow:0 2px 6px rgba(31,39,64,.05);cursor:grab}
+  .kcard:active{cursor:grabbing}
+  .kcard.dragging{opacity:.5}
+  .kcard .kn{font-weight:700}
+  .kcard .ks{font-size:12px;color:var(--muted);margin-top:2px}
+  .kcard .kv{font-size:12.5px;font-weight:700;color:var(--green);margin-top:8px}
+  .kcard .kacts{display:flex;gap:6px;margin-top:10px}
+  .kmini{flex:1;background:#f2f4fb;color:var(--muted);padding:6px;border-radius:7px;display:flex;align-items:center;justify-content:center;gap:5px;font-size:11.5px}
+  .kmini:hover{background:var(--primary-l);color:var(--primary-d)}
+  .kmini.doc:hover{background:var(--green-l);color:var(--green)}
+
+  /* Modal */
+  .overlay{position:fixed;inset:0;background:rgba(20,26,45,.5);display:grid;place-items:center;z-index:50;padding:20px}
+  .modal{background:#fff;border-radius:16px;width:100%;max-width:640px;max-height:90vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.3)}
+  .mhead{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:2}
+  .mhead b{font-size:16px}
+  .mbody{padding:20px 22px}
+  .mfoot{padding:16px 22px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:#fff}
+  .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .field{display:flex;flex-direction:column;gap:5px}
+  .field.full{grid-column:1/-1}
+  .field label{font-size:12px;font-weight:700;color:var(--muted)}
+  .xbtn{width:34px;height:34px;background:#f2f4fb;border-radius:9px;display:grid;place-items:center;color:var(--muted);padding:0;font-size:18px}
+  .xbtn:hover{background:var(--red-l);color:var(--red)}
+  .btn-ghost{background:#f2f4fb;color:var(--ink);padding:10px 16px}
+  .btn-ghost:hover{background:#e6e9f4}
+  .hint{font-size:12px;color:var(--muted);margin-top:4px}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 20px;border-radius:10px;box-shadow:var(--shadow);z-index:100;opacity:0;transition:.3s;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px)}
+  .divider{height:1px;background:var(--line);margin:18px 0}
+  .filedrop{border:2px dashed var(--line);border-radius:11px;padding:18px;text-align:center;color:var(--muted);font-size:13px}
+  code.k{background:#eef0f7;padding:2px 6px;border-radius:5px;font-size:12px}
+  @media(max-width:640px){.fgrid{grid-template-columns:1fr}.wrap{padding:16px 14px 50px}header{padding:14px 16px}.hide-sm{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="hrow">
+    <div class="logo"><img src="data:image/png;base64,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" alt="Colégio Rosa Machado"></div>
+    <div class="htitle">
+      <b id="hSchool">Colégio Rosa Machado</b>
+      <span id="hYear">Controle de rematrícula • Ano letivo 2027</span>
+    </div>
+    <div class="hspace"></div>
+  </div>
+</header>
+
+<div class="shell">
+  <aside class="sidebar">
+    <nav class="navmenu">
+      <button class="navitem" id="tabDash" onclick="setView('dash')"><span class="ni">📊</span><span>Painel</span></button>
+      <button class="navitem active" id="tabLista" onclick="setView('lista')"><span class="ni">📋</span><span>Lista</span></button>
+      <button class="navitem" id="tabKanban" onclick="setView('kanban')"><span class="ni">🗂️</span><span>Tarefas</span></button>
+      <div class="navsep"></div>
+      <div class="navlabel">Ações</div>
+      <button class="navact accent" onclick="generateAll()"><span class="ni">📄</span><span>Gerar contratos</span></button>
+      <button class="navact" onclick="exportPlanilha()"><span class="ni">⬇️</span><span>Exportar dados</span></button>
+      <button class="navact" onclick="openConfig()"><span class="ni">⚙️</span><span>Configurar escola</span></button>
+    </nav>
+  </aside>
+  <div class="wrap">
+  <!-- KPIs -->
+  <div class="kpis" id="kpis"></div>
+
+  <!-- bar -->
+  <div class="bar">
+    <div id="listTools" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;flex:1">
+      <div class="searchbox">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="search" placeholder="Buscar aluno ou responsável..." oninput="render()">
+      </div>
+      <select id="filterSerie" style="width:auto" onchange="render()"><option value="">Todas as séries</option></select>
+      <select id="filterPeriodo" style="width:auto" onchange="render()"><option value="">Todos os períodos</option></select>
+      <select id="filterEtapa" style="width:auto" onchange="render()">
+        <option value="">Todas as etapas</option>
+      </select>
+      <div class="grow"></div>
+      <button class="toolbtn" onclick="openImport()">📥 Importar</button>
+      <button class="btn-primary" onclick="openStudent()">＋ Novo aluno</button>
+    </div>
+  </div>
+
+  <!-- PAINEL -->
+  <div id="viewDash" class="hidden"></div>
+
+  <!-- LISTA -->
+  <div id="viewLista" class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Aluno</th>
+          <th>Série (atual → destino)</th>
+          <th>Período</th>
+          <th>Responsável</th>
+          <th>Contato</th>
+          <th>Mensalidade</th>
+          <th>Etapa</th>
+          <th style="text-align:right">Ações</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div id="listaEmpty" class="empty hidden">
+      <b>Nenhum aluno na lista ainda</b>
+      Clique em <strong>“Novo aluno”</strong> para começar, ou use <strong>Importar</strong> para colar sua lista de uma vez.
+    </div>
+  </div>
+
+  <!-- KANBAN -->
+  <div id="viewKanban" class="hidden">
+    <div class="kanban" id="kanban"></div>
+  </div>
+  </div><!-- /wrap -->
+</div><!-- /shell -->
+
+<!-- ================= MODAL: ALUNO ================= -->
+<div id="mStudent" class="overlay hidden">
+  <div class="modal">
+    <div class="mhead"><b id="mStudentTitle">Novo aluno</b><button class="xbtn" onclick="closeModal('mStudent')">×</button></div>
+    <div class="mbody">
+      <div class="fgrid">
+        <div class="field full"><label>Nome do aluno *</label><input id="f_nome" placeholder="Ex.: Maria Eduarda Silva"></div>
+        <div class="field"><label>Série atual</label><input id="f_serieAtual" placeholder="Ex.: 5º ano"></div>
+        <div class="field"><label>Série destino</label><input id="f_serieDestino" placeholder="Ex.: 6º ano"></div>
+        <div class="field"><label>Período</label><select id="f_periodo"><option value="">—</option><option>Manhã</option><option>Tarde</option><option>Integral</option></select></div>
+        <div class="field"><label>Segmento</label><select id="f_segmento"><option value="">—</option><option>Integral</option><option>Parcial</option><option>Semi-integral</option></select></div>
+        <div class="field full"><label>Responsável</label><input id="f_responsavel" placeholder="Nome do responsável"></div>
+        <div class="field"><label>WhatsApp / telefone</label><input id="f_whatsapp" placeholder="(15) 99999-9999"></div>
+        <div class="field full"><label>E-mail</label><input id="f_email" placeholder="responsavel@email.com"></div>
+        <div class="field"><label>Mensalidade (R$)</label><input id="f_mensalidade" type="number" step="0.01" placeholder="0,00"></div>
+        <div class="field"><label>Desconto (%)</label><input id="f_desconto" type="number" step="0.01" placeholder="0"></div>
+        <div class="field full"><label>Etapa do processo</label><select id="f_etapa"></select></div>
+        <div class="field full"><label>Observações</label><textarea id="f_obs" rows="2" placeholder="Anotações do atendimento..."></textarea></div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn-ghost" onclick="closeModal('mStudent')">Cancelar</button>
+      <button class="btn-primary" onclick="saveStudent()">Salvar aluno</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MODAL: CONFIG ESCOLA ================= -->
+<div id="mConfig" class="overlay hidden">
+  <div class="modal">
+    <div class="mhead"><b>Configurar escola</b><button class="xbtn" onclick="closeModal('mConfig')">×</button></div>
+    <div class="mbody">
+      <p class="hint" style="margin-top:0">Esses dados aparecem no cabeçalho e são usados para preencher o contrato automaticamente.</p>
+      <div class="fgrid">
+        <div class="field full"><label>Nome da escola *</label><input id="c_escola" placeholder="Colégio Exemplo"></div>
+        <div class="field"><label>CNPJ</label><input id="c_cnpj" placeholder="00.000.000/0001-00"></div>
+        <div class="field"><label>Ano letivo (destino)</label><input id="c_ano" placeholder="2027"></div>
+        <div class="field full"><label>Endereço da escola</label><input id="c_endereco" placeholder="Rua, nº, bairro, cidade/UF"></div>
+        <div class="field"><label>Cidade (foro)</label><input id="c_cidade" placeholder="Votorantim/SP"></div>
+        <div class="field"><label>Responsável legal</label><input id="c_repr" placeholder="Nome do diretor(a)"></div>
+        <div class="field full"><label>Nº de parcelas (anuidade)</label><input id="c_parcelas" type="number" placeholder="12"></div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn-ghost" onclick="closeModal('mConfig')">Cancelar</button>
+      <button class="btn-primary" onclick="saveConfig()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MODAL: IMPORTAR ================= -->
+<div id="mImport" class="overlay hidden">
+  <div class="modal">
+    <div class="mhead"><b>Importar / exportar dados</b><button class="xbtn" onclick="closeModal('mImport')">×</button></div>
+    <div class="mbody">
+      <b>1. Colar lista (CSV ou texto)</b>
+      <p class="hint">Uma linha por aluno. Colunas na ordem: <code class="k">Nome; Série atual; Série destino; Período; Segmento; Responsável; WhatsApp; E-mail; Mensalidade; Desconto%</code>. Separe por <code class="k">;</code> ou tabulação (colar do Excel/Sheets funciona direto). A 1ª linha pode ser o cabeçalho.</p>
+      <textarea id="csvArea" rows="6" placeholder="Maria Silva; 5º ano; 6º ano; Manhã; Integral; João Silva; (15) 99999-0000; joao@email.com; 950; 10"></textarea>
+      <div style="display:flex;gap:10px;margin-top:10px">
+        <button class="btn-primary" onclick="importCSV()">Importar lista</button>
+        <button class="btn-ghost" onclick="loadSample()">Carregar exemplo</button>
+      </div>
+      <div class="divider"></div>
+      <b>2. Backup do sistema (JSON)</b>
+      <p class="hint">Como esta plataforma roda no navegador, use o backup para guardar e recarregar seus dados quando quiser.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="toolbtn" onclick="exportData()">⬇️ Exportar backup</button>
+        <label class="toolbtn" style="cursor:pointer">📤 Restaurar backup
+          <input type="file" accept=".json" style="display:none" onchange="importData(event)">
+        </label>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn-ghost" onclick="closeModal('mImport')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const SEED_ALUNOS = [{"nome": "Gabriel de Souza Gonçalves", "serieAtual": "Maternal", "serieDestino": "Etapa I", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Cinthia Gonçalves", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Gael de Souza Marra", "serieAtual": "Maternal", "serieDestino": "Etapa I", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Ana paula de Souza Marra", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Aurora Silva Oliveira", "serieAtual": "Maternal", "serieDestino": "Etapa I", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Iara Tamires da Silva", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Davi César J. de Arruda", "serieAtual": "Etapa I", "serieDestino": "Etapa II", "periodo": "Manhã", "segmento": "Semi-integral", "responsavel": "Valéria de Moura Jerônimo Arruda", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Bernardo de Arruda Rosa", "serieAtual": "Etapa I", "serieDestino": "Etapa II", "periodo": "Tarde", "segmento": "Semi-integral", "responsavel": "Rafaela Manoel de Arruda Rosa", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Heloá Resende Rodrigues", "serieAtual": "Etapa I", "serieDestino": "Etapa II", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Heloisa Helena Camillo Resende", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Joaquim Vieira Vaz", "serieAtual": "Etapa I", "serieDestino": "Etapa II", "periodo": "Tarde", "segmento": "Semi-integral", "responsavel": "Bianca Vieira", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Lavinia Ramos Cabrera", "serieAtual": "Etapa I", "serieDestino": "Etapa II", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Jady Ramos", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Luara Valentina da Silva", "serieAtual": "Etapa I", "serieDestino": "Etapa II", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Aline Renata de Souza Queiroz", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Manuela Oliveira Ayub Moraes", "serieAtual": "Etapa I", "serieDestino": "Etapa II", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Franciele de Oliveira Alves", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Maria Clara G. Gonçalves", "serieAtual": "Etapa I", "serieDestino": "Etapa II", "periodo": "Manhã", "segmento": "Semi-integral", "responsavel": "Daniele Giglio da Silva Gonçalves", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Maria Luisa de Oliveira Soares", "serieAtual": "Etapa I", "serieDestino": "Etapa II", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Flavia Regina de Oliveira Zamorel", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Maria Mel Ribeiro Botelho", "serieAtual": "Etapa I", "serieDestino": "Etapa II", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Nataly Ribeiro Neto Botelho", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Maria Sophia Albuquerque", "serieAtual": "Etapa I", "serieDestino": "Etapa II", "periodo": "Manhã", "segmento": "Semi-integral", "responsavel": "Stephany Larissa Saltori de Moura", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Michel Medeiros Regatieri Ferreira", "serieAtual": "Etapa I", "serieDestino": "Etapa II", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Gisele Francine Medeiros", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Miguel Antonio de Medeiros Silva", "serieAtual": "Etapa I", "serieDestino": "Etapa II", "periodo": "Manhã", "segmento": "Semi-integral", "responsavel": "Jessica Medeiros", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Anne Ruixi Huang", "serieAtual": "Etapa I", "serieDestino": "Etapa II", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Zewen Huang", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Gael dos Santos Rodrigues", "serieAtual": "Etapa I", "serieDestino": "Etapa II", "periodo": "Tarde", "segmento": "Semi-integral", "responsavel": "Yasmin Aparecida dos Santos", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "João Daniel R.Gonçalves", "serieAtual": "Etapa I", "serieDestino": "Etapa II", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Danielle Rodrigues Mendonça", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Manuella Correia Duarte", "serieAtual": "Etapa I", "serieDestino": "Etapa II", "periodo": "Tarde", "segmento": "Semi-integral", "responsavel": "Gabriela Muniz Correa Duarte", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Stella Rodrigues T.", "serieAtual": "Etapa I", "serieDestino": "Etapa II", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Yasmim de Abreu Tranquilino", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Zoe Gouveia de Lima Araujo", "serieAtual": "Etapa I", "serieDestino": "Etapa II", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Anna Sahra Monte de Camargo Pereira", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Samuel Vieira Barroso", "serieAtual": "Etapa I", "serieDestino": "Etapa II", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Michele Barroso", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Yasmin Louise Ramos do Couto Gil", "serieAtual": "Etapa I", "serieDestino": "Etapa II", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Jennifer do Couto Gil", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Lucas Gouvea de carvalho", "serieAtual": "Etapa II", "serieDestino": "1º ano", "periodo": "Manhã", "segmento": "Semi-integral", "responsavel": "Juliana Gouvea", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Luiza de Campos Gomes", "serieAtual": "Etapa II", "serieDestino": "1º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Daiane Graça de Campos", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Miguel Rodrigues Modesto", "serieAtual": "Etapa II", "serieDestino": "1º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Ana Paula Rodrigues Modesto", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Davi Odilon G. Soares", "serieAtual": "Etapa II", "serieDestino": "1º ano", "periodo": "Manhã", "segmento": "Semi-integral", "responsavel": "Thays Serafim Odilon dos Santos", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Alicia Silva Oliveira", "serieAtual": "Etapa II", "serieDestino": "1º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Iara Tamires da Silva", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Fernando Ruibin Huang", "serieAtual": "Etapa II", "serieDestino": "1º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Zewen Huang", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Gael Silva dos Santos Costa Cruz", "serieAtual": "Etapa II", "serieDestino": "1º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Flávia Esquivel da Cruz da Costa", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Isis dos Santos Martines Ferreira", "serieAtual": "Etapa II", "serieDestino": "1º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Debora dos Santos Martines", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Valentina Goncalves da Fonseca", "serieAtual": "Etapa II", "serieDestino": "1º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Laura Cristina Gonçalves da Fonseca", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Davi Raphael Leme Martins", "serieAtual": "Etapa II", "serieDestino": "1º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Carla de Oliveira Martins", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Davi Miguel Ismerim Marcellino", "serieAtual": "Etapa I", "serieDestino": "Etapa II", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Andressa Ismerim", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Alice Aurora R. Chaves", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Tatiana Cristina Ribeiro", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Alice Luna Rosa", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Ellen Cristine Aparecida Conceição", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Alice Martins Franco", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Aline Cavalcanti Franco", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Arthur Contalabio de Moraes", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Manhã", "segmento": "Semi-integral", "responsavel": "Ligia Vieira de Moraes", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Benicio Aguiar Pereira", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Ingrid Marques de Aguiar", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Heloisa Salinas Cardoso", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Karina Salinas Cosme Cardoso", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Igor Machado Amaral", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Priscila dos Santos Machado Amaral", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Isabela Oliveira P. de Brito", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Matheus Poppes de Brito", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Julia Camargo Falcade", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Manhã", "segmento": "Semi-integral", "responsavel": "Keila de Fátima Camargo", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Lara Miguel Ferreira da Silva", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Fernanda Miguel Ferreira", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Leonardo Prestes", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Camila Cristina da Silva Oliveira", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Lorenzo Prestes", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Camila Cristina da Silva Oliveira", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Olga Spinelli de Souza Alves", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Manhã", "segmento": "Semi-integral", "responsavel": "Patricia de Fátima Souza Alves", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Rafaelly Gomes Melo", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Danielly Oliveira da Silva Gomes Melo", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Maria Clara Jodar Verona", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Mariana Jodar", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Alicia Leles Moreni", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Vitoria Leles Fernandes da Silva", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Arthur Pistelli Correa", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Camila Lopes Pistelli Corrêa", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Davi Lucas Cunha", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Fabiana Olga de Azevedo Cunha", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "David de Souza Bueno", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Debora de Freitas Souza Bueno", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Lavinia de Barros Miralha", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Eliana de Barros Miralha", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Maitê Fernandes Lopes de Oliveira", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Yasmin Caroline de Souza", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Marcela Martinelli de Souza", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Alessandra Martinelli", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Maria Luiza Mendes Pereira", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Nathiara de Fatima Mendes Pereira", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Mariah Gabriel Gonvalves", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Pamela Gabriel N.S.Gonçalves", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Melissa Graciano Nunes", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Flávia Kobal Graciano", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Théo Sander Alves", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Juliana Aparecida Alves Lima", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Isabela dos Santos Cordeiro", "serieAtual": "1º ano", "serieDestino": "2º ano", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Maria Erica dos Santos Cordeiro", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Alice Borges Gonzaga", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Taise Borges de Lima", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Aryelle Siqueira Rodrigues", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Evelin Flavia Siqueira Mascarenhas", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Eduardo Walter", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Liliane Walter Sanches", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Gabriel Vieira de Castro", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Mayara Roberto Vieira", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Hávila Luiza da Veiga Oliveira", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Hávila Luiza da Veiga Oliveira", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Isabelle Almada Falck", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Thaionara Leide Almada Falck", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Lais de Almeida Queiroz", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Carina de Almeida Queiroz", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Lucca Lorenzo Costa Silva", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Luana Cristina da Costa da Silva", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Luis Gabriel da Cruz Amaral", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Sandra Grasiella da Cruz", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Pedro Vicente Martins", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Marcia Cristina Vicente Martins", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Rafael Ribeiro Rodrigues", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Talita Ribeiro", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Rebeca Franco de Camargo", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Bruna Cavalcanti Franco", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Sophia Gonçalves Saraiva", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Cibele Gonçalves Ferreira", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "João Miguel Vieira Vaz", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Manhã", "segmento": "Semi-integral", "responsavel": "Bianca Gabriele Vieira", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Beatriz Alves Cordeiro", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Karen Alves", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Bernardo Camargo Cassolla", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Emily Camargo Rolim", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Betina de Sales Gimenes", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Rafaela de Sales Gimenes", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Caio Fernando Freitas de Paiva", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Fernanda Bernardo de Freitas de Paiva", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Davi de Souza Gonçalves", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Cintia Hessel de Souza Gonçalves", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Gabriel Fernandes de Faria", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Yasmin Fernandes de Araujo", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Heitor dos Santos Martines Ferreira", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Debora dos Santos Martines", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Heitor Soares Flauzino", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Karina Soares Machado", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Maiara Requena de Sousa", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Camila da Luz Requena de Souza", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Maitê Fernanda S. Melo", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Tarde", "segmento": "Semi-integral", "responsavel": "Larissa Fernanda da Silva", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Maria Eloah Sara Gomes", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Viviana Clarinda do Amaranto Rodrigues", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Miguel Farias do Nascimento", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Graziele Daiane Farias Pinto", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Miguel Henrique Ferreira", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Tarde", "segmento": "Semi-integral", "responsavel": "Suelem Cristina Barros", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Miguel Pedroso Lemes", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Lilian de Camargo Pedroso Lemes", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Vinícius Andrade de Oliveira", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Tatiane de Oliveira Silva", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Vinícius Feliciani de Arruda", "serieAtual": "2º ano", "serieDestino": "3º ano", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Luciana Feliciani Lopes da Silva", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Anna Júlia de Moraes Ruberti", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Juliane Aline Vieira de Moraes Ruberti", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Flávia Vieira Nunes", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Manhã", "segmento": "Semi-integral", "responsavel": "Julieta Vieira Nunes", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Gabriely Paulino Mendes", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Manhã", "segmento": "Semi-integral", "responsavel": "Renata Aparecida Mendes Ribeiro", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Isabelly Vitoria Vaz", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Gisele Cristina Leite", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Lorena Rosa Barbosa", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Audrei Cristina Rosa", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Luiza Ribeiro Rodolpho", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Elizangela Ribeiro Rodolpho", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Mateus Rodrigues Modesto", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Ana Paula Rodrigues Modesto", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Murilo Roberto S. Ribeiro", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Manhã", "segmento": "Semi-integral", "responsavel": "Joelita Pessoa dos Santos", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Olivia Ribeiro Rodolpho", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Elizangela Ribeiro Rodolpho", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Pedro de Freitas Ramos", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Camila Cristina de Freitas Ramos", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Valentina Laraya Rodrigues", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Laryssa Aparecida Rosa Laraya", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Valentina Ribeiro Rodolpho", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Elizangela Ribeiro Rodolpho", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Valentina Jodar Verona", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Mariana Jodar", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Alice Manuela Vicente Dantas", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Maria Eduarda Vicente Del Rio", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Antonella de Souza Pereira", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Larissa Pereira Pires de Souza", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Isabelly Medeiros Regatieri Ferreira", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Gisele Francine Medeiros", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Leonardo Godoy Domingues", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Patricia Correa Godoy Domingues", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Lorena Araujo Gomes", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Jessica Evelyn Araujo Gomes", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Louise Queiroz Lima Camargo", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Vanessa Cristina Queiroz Pereira Campos", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Noah Silva de Oliveira", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Otacilia do Nascimento Silva Oliveira", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Raphaelly Vitória Moreira Benato", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Aline Batista Moreira", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Micaela Carolina R. Braga", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Juliano Braga Santos", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Arthur José de Moraes", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Daniele Moraes", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Lana Valentina Madoglio Bernardes", "serieAtual": "3º ano", "serieDestino": "4º ano", "periodo": "Tarde", "segmento": "Semi-integral", "responsavel": "Aline Cristina", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Alícia Noronha da Silva", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Jessica Noronha da Silva", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Amanda Ferreira Rodrigues", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Sabrina da Silva Ferreira", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Bernardo Augusto Vasco", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Caroline Oliveira Andrade", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Daniela Bertola Ploom", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Eliane Ploom", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Heloisa Bernardo Sales", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Juliane Alves Bernardo Sales", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "João Lucas Mendes Taveira", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Luciana Cristina Mendes Viudes Taveira", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Livia Vitoria Domingues Leal", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Manhã", "segmento": "Semi-integral", "responsavel": "Erica Domingues Leal", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Lorena Pereira Miranda", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Eloisa Marques Pereira Miranda", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Lorenzo de Oliveira Costa", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Mariana de Oliveira Novais", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Lucca Ferreira Caballero Duran", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Kelen Duarte Ferreira de Lima", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Luis Adolpho Oliveira", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Kathleen Diany Oliveira", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Miguel de Camargo Moura", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Diego da Silva Moura", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Miguel Henrique de Campos Gomes", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Manhã", "segmento": "Parcial", "responsavel": "Daiane Graça de Campos", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Maria Vitória Diniz Ferraz", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Iara Aparecida Diniz", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Pedro Ferrarezzi", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Manhã", "segmento": "Integral", "responsavel": "Suellen de Fátima Corrêa Pires Ferrarezzi", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "André Felipe Piatti de Souza", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Ana Laura Piatti de Souza", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Benício Martim Cruz", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Maiza Alves de Lima Martim Cruz", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Davi Gil Silva Genkawa", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Camila Vieira Genkawa Silva", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Gabriel Henrique Nunes dos Santos", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Francine Cristina Nunes dos Santos", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Isabella dos Santos Pereira", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Isabella dos Santos Pereira", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Kauan Ferreira Fogaça", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Jaqueline de Fatima Ferreira Fogaça", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Miguel Nardin", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Tarde", "segmento": "Semi-integral", "responsavel": "Jose Roberto Nardin", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Nicoly Silva Genkawa", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Tarde", "segmento": "Semi-integral", "responsavel": "Camila Vieira Genkawa Silva", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Sarah Durães de Oliveira", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Karen Duraes", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Sophie Aparecida dos Santos", "serieAtual": "4º ano", "serieDestino": "5º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Elisangela Paulo Bento", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Allana Ferreira Fogaça", "serieAtual": "5º ano", "serieDestino": "6º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Jaqueline de Fatima Ferreira Fogaça", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Ariel da Silva Ribeiro", "serieAtual": "5º ano", "serieDestino": "6º ano", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Patrícia Souza da Silva Ribeiro", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Benjamin Galvan Costa Gonçalves", "serieAtual": "5º ano", "serieDestino": "6º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Catarino Costa", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Daniel Rodrigues Leme dos Santos", "serieAtual": "5º ano", "serieDestino": "6º ano", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Natali Rodrigues Camara", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Marco Tulio Almeida de Souza", "serieAtual": "5º ano", "serieDestino": "6º ano", "periodo": "Tarde", "segmento": "Semi-integral", "responsavel": "Patricia Soares de Almeida", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Miguel Mendes Gonzales", "serieAtual": "5º ano", "serieDestino": "6º ano", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Ana Jessica de Almeida Gonzales", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Murilo Rosa Theodoro", "serieAtual": "5º ano", "serieDestino": "6º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Veronica Aparecida da Rosa", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Pedro Henrique Medeiros Regatieri Ferreira", "serieAtual": "5º ano", "serieDestino": "6º ano", "periodo": "Tarde", "segmento": "Integral", "responsavel": "Gisele Francine Medeiros", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}, {"nome": "Sara Usemann Lima", "serieAtual": "5º ano", "serieDestino": "6º ano", "periodo": "Tarde", "segmento": "Parcial", "responsavel": "Camila Sales Usemann de Lima", "whatsapp": "", "email": "", "mensalidade": "", "desconto": "", "etapa": "a_contatar", "obs": ""}];
+/* ================= ESTADO ================= */
+const ETAPAS = [
+  {id:'a_contatar', nome:'A contatar',            cor:'#8a90a3', bg:'#eef0f7'},
+  {id:'contato',    nome:'Contato feito',         cor:'#14224f', bg:'#e8ebf4'},
+  {id:'negociacao', nome:'Em negociação',         cor:'#e0a022', bg:'#fbf1dc'},
+  {id:'documento',  nome:'Documento enviado',     cor:'#8b5cf6', bg:'#f1ecfd'},
+  {id:'confirmada', nome:'Rematrícula confirmada',cor:'#16a37b', bg:'#e4f6ef'}
+];
+let state = {
+  config:{escola:'Colégio Rosa Machado', cnpj:'', ano:'2027', endereco:'', cidade:'', repr:'', parcelas:'12'},
+  alunos:[]
+};
+let editingId = null;
+let view = 'lista';
+
+/* ================= UTIL ================= */
+const $ = id => document.getElementById(id);
+const uid = () => 'a'+Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3);
+const money = v => (Number(v)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const esc = s => (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const etapaById = id => ETAPAS.find(e=>e.id===id) || ETAPAS[0];
+function valorLiquido(a){const m=Number(a.mensalidade)||0;const d=Number(a.desconto)||0;return m*(1-d/100);}
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2600);}
+
+/* ================= RENDER ================= */
+function setView(v){
+  view=v;
+  $('tabDash').classList.toggle('active',v==='dash');
+  $('tabLista').classList.toggle('active',v==='lista');
+  $('tabKanban').classList.toggle('active',v==='kanban');
+  $('viewDash').classList.toggle('hidden',v!=='dash');
+  $('viewLista').classList.toggle('hidden',v!=='lista');
+  $('viewKanban').classList.toggle('hidden',v!=='kanban');
+  $('listTools').style.display = v==='dash' ? 'none' : 'flex';
+  render();
+}
+
+function filteredAlunos(){
+  const q=($('search').value||'').toLowerCase().trim();
+  const fe=$('filterEtapa').value;
+  const fs=$('filterSerie').value;
+  const fp=$('filterPeriodo').value;
+  return state.alunos.filter(a=>{
+    const okQ=!q || (a.nome||'').toLowerCase().includes(q) || (a.responsavel||'').toLowerCase().includes(q);
+    const okE=!fe || a.etapa===fe;
+    const okS=!fs || a.serieAtual===fs;
+    const okP=!fp || a.periodo===fp;
+    return okQ && okE && okS && okP;
+  });
+}
+
+function renderKPIs(){
+  const total=state.alunos.length;
+  const conf=state.alunos.filter(a=>a.etapa==='confirmada');
+  const pend=total-conf.length;
+  const receita=conf.reduce((s,a)=>s+valorLiquido(a),0);
+  $('kpis').innerHTML=`
+    <div class="kpi p"><div class="lbl">Total de alunos</div><div class="val">${total}</div></div>
+    <div class="kpi g"><div class="lbl">Rematrículas confirmadas</div><div class="val">${conf.length}</div></div>
+    <div class="kpi a"><div class="lbl">Em andamento</div><div class="val">${pend}</div></div>
+    <div class="kpi g"><div class="lbl">Receita confirmada / mês</div><div class="val money">${money(receita)}</div></div>`;
+}
+
+function renderLista(){
+  const rows=filteredAlunos();
+  const tb=$('tbody');
+  $('listaEmpty').classList.toggle('hidden',rows.length>0);
+  tb.innerHTML=rows.map(a=>{
+    const e=etapaById(a.etapa);
+    const temDesc=Number(a.desconto)>0 && a.mensalidade;
+    return `<tr>
+      <td><div class="stu-name">${esc(a.nome)}</div>${a.email?`<div class="stu-sub">${esc(a.email)}</div>`:''}</td>
+      <td>${esc(a.serieAtual||'—')} <span class="stu-sub">→</span> <strong>${esc(a.serieDestino||'—')}</strong></td>
+      <td>${a.periodo?`<span class="pill" style="background:#e8ebf4;color:#14224f">${esc(a.periodo)}</span>`:'—'}</td>
+      <td>${esc(a.responsavel||'—')}</td>
+      <td>${esc(a.whatsapp||'—')}</td>
+      <td>
+        <div class="mens-edit">
+          <span class="mens-cur">R$</span>
+          <input class="mens-inp" type="number" step="0.01" min="0" inputmode="decimal"
+            value="${a.mensalidade!==''&&a.mensalidade!=null?a.mensalidade:''}" placeholder="0,00"
+            onchange="updateMensalidade('${a.id}',this.value)"
+            onkeydown="if(event.key==='Enter'){this.blur();}">
+        </div>
+        ${temDesc?`<div class="stu-sub">líq. ${money(valorLiquido(a))} (-${a.desconto}%)</div>`:''}
+      </td>
+      <td><span class="pill" style="background:${e.bg};color:${e.cor}">${e.nome}</span></td>
+      <td><div class="rowacts">
+        <button class="iconbtn doc" title="Gerar contrato" onclick="generateOne('${a.id}')">📄</button>
+        <button class="iconbtn wa" title="Enviar no WhatsApp" onclick="sendWhats('${a.id}')">💬</button>
+        <button class="iconbtn" title="Editar" onclick="openStudent('${a.id}')">✏️</button>
+        <button class="iconbtn del" title="Excluir" onclick="delStudent('${a.id}')">🗑️</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderKanban(){
+  const rows=filteredAlunos();
+  const k=$('kanban');
+  k.innerHTML=ETAPAS.map(e=>{
+    const items=rows.filter(a=>a.etapa===e.id);
+    const cards=items.map(a=>`
+      <div class="kcard" draggable="true" data-id="${a.id}"
+        ondragstart="dragStart(event)" ondragend="dragEnd(event)">
+        <div class="kn">${esc(a.nome)}</div>
+        <div class="ks">${esc(a.serieAtual||'?')} → ${esc(a.serieDestino||'?')}${a.periodo?' • '+esc(a.periodo):''}${a.segmento?' • '+esc(a.segmento):''}</div>
+        ${a.responsavel?`<div class="ks">Resp.: ${esc(a.responsavel)}</div>`:''}
+        ${a.mensalidade?`<div class="kv">${money(valorLiquido(a))}/mês</div>`:''}
+        <div class="kacts">
+          <button class="kmini doc" onclick="generateOne('${a.id}')">📄 Contrato</button>
+          <button class="kmini" onclick="openStudent('${a.id}')">✏️ Editar</button>
+        </div>
+      </div>`).join('');
+    return `<div class="kcol" data-etapa="${e.id}"
+        ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">
+      <div class="khead"><span class="kdot" style="background:${e.cor}"></span>${e.nome}
+        <span class="kcount">${items.length}</span></div>
+      <div class="kbody">${cards||'<div style="color:#9aa0b3;font-size:12px;text-align:center;padding:14px">—</div>'}</div>
+    </div>`;
+  }).join('');
+}
+
+function render(){
+  renderKPIs();
+  if(view==='dash') renderDashboard();
+  else if(view==='lista') renderLista();
+  else renderKanban();
+}
+
+/* ================= PAINEL / DASHBOARD ================= */
+function agrupar(arr, key){
+  const m=new Map();
+  arr.forEach(a=>{const k=(a[key]||'—');m.set(k,(m.get(k)||0)+1);});
+  return [...m.entries()].map(([label,value])=>({label,value}));
+}
+function ordemSerie(label){
+  const ord=['Maternal','Etapa I','Etapa II','1º ano','2º ano','3º ano','4º ano','5º ano','6º ano'];
+  const i=ord.indexOf(label); return i<0?99:i;
+}
+function donut(titulo, data, paleta){
+  const total=data.reduce((s,d)=>s+d.value,0);
+  const R=54, C=2*Math.PI*R; let off=0;
+  const segs=data.map((d,i)=>{
+    const frac=total?d.value/total:0; const len=frac*C;
+    const s=`<circle cx="70" cy="70" r="${R}" fill="none" stroke="${paleta[i%paleta.length]}" stroke-width="22"
+      stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}" transform="rotate(-90 70 70)"></circle>`;
+    off+=len; return s;
+  }).join('');
+  const leg=data.map((d,i)=>`<div class="lg"><span class="lgdot" style="background:${paleta[i%paleta.length]}"></span>
+    ${esc(d.label)} <b>${d.value}</b> <span class="stu-sub">(${total?Math.round(d.value/total*100):0}%)</span></div>`).join('');
+  return `<div class="card dashcard">
+    <div class="dashtitle">${titulo}</div>
+    <div class="donutwrap">
+      <svg width="140" height="140" viewBox="0 0 140 140">${segs}
+        <text x="70" y="66" text-anchor="middle" font-size="26" font-weight="800" fill="var(--ink)">${total}</text>
+        <text x="70" y="86" text-anchor="middle" font-size="11" fill="var(--muted)">alunos</text>
+      </svg>
+      <div class="legend">${leg}</div>
+    </div>
+  </div>`;
+}
+function barsV(titulo, data){
+  const max=Math.max(1,...data.map(d=>d.value));
+  const bars=data.map(d=>`<div class="barcol">
+      <div class="barval">${d.value}</div>
+      <div class="bar" style="height:${Math.round(d.value/max*160)+4}px"></div>
+      <div class="barlbl">${esc(d.label)}</div>
+    </div>`).join('');
+  return `<div class="card dashcard wide">
+    <div class="dashtitle">${titulo}</div>
+    <div class="barchart">${bars}</div>
+  </div>`;
+}
+function funil(titulo, alunos){
+  const total=alunos.length||1;
+  const rows=ETAPAS.map(e=>{
+    const n=alunos.filter(a=>a.etapa===e.id).length;
+    const pct=Math.round(n/total*100);
+    return `<div class="funrow">
+      <div class="funlbl"><span class="kdot" style="background:${e.cor}"></span>${e.nome}</div>
+      <div class="funbar"><div class="funfill" style="width:${Math.max(pct,2)}%;background:${e.cor}"></div></div>
+      <div class="funn"><b>${n}</b> <span class="stu-sub">${pct}%</span></div>
+    </div>`;
+  }).join('');
+  return `<div class="card dashcard wide">
+    <div class="dashtitle">${titulo}</div>
+    <div class="funil">${rows}</div>
+  </div>`;
+}
+function renderDashboard(){
+  const A=state.alunos;
+  const conf=A.filter(a=>a.etapa==='confirmada');
+  const comValor=A.filter(a=>Number(a.mensalidade)>0);
+  const receitaMes=conf.reduce((s,a)=>s+valorLiquido(a),0);
+  const parcelas=Number(state.config.parcelas)||12;
+  const potencialMes=A.reduce((s,a)=>s+valorLiquido(a),0);
+  const ticket=comValor.length?comValor.reduce((s,a)=>s+valorLiquido(a),0)/comValor.length:0;
+  const conv=A.length?Math.round(conf.length/A.length*100):0;
+
+  const paletaP=['#a70409','#14224f','#e0a022','#16a37b','#8b5cf6'];
+  const paletaS=['#14224f','#a70409','#e0a022','#16a37b'];
+
+  const serieData=agrupar(A,'serieAtual').sort((a,b)=>ordemSerie(a.label)-ordemSerie(b.label));
+  const perData=agrupar(A,'periodo').sort((a,b)=>b.value-a.value);
+  const segData=agrupar(A,'segmento').sort((a,b)=>b.value-a.value);
+
+  $('viewDash').innerHTML=`
+    <div class="dashcards">
+      <div class="card dashmini"><div class="dm-lbl">Taxa de conversão</div><div class="dm-val" style="color:var(--green)">${conv}%</div><div class="stu-sub">${conf.length} de ${A.length} confirmadas</div></div>
+      <div class="card dashmini"><div class="dm-lbl">Receita confirmada / mês</div><div class="dm-val" style="color:var(--green)">${money(receitaMes)}</div><div class="stu-sub">Projeção anual: ${money(receitaMes*parcelas)}</div></div>
+      <div class="card dashmini"><div class="dm-lbl">Potencial total / mês</div><div class="dm-val" style="color:var(--primary)">${money(potencialMes)}</div><div class="stu-sub">se todos rematricularem</div></div>
+      <div class="card dashmini"><div class="dm-lbl">Ticket médio</div><div class="dm-val" style="color:var(--primary)">${money(ticket)}</div><div class="stu-sub">${comValor.length} com mensalidade definida</div></div>
+    </div>
+    <div class="dashgrid">
+      ${funil('Funil de rematrícula (por etapa)', A)}
+      ${donut('Por período', perData, paletaP)}
+      ${donut('Por segmento', segData, paletaS)}
+      ${barsV('Alunos por série (atual)', serieData)}
+    </div>`;
+}
+
+/* ================= DRAG & DROP ================= */
+let dragId=null;
+function dragStart(e){dragId=e.target.dataset.id;e.target.classList.add('dragging');e.dataTransfer.effectAllowed='move';}
+function dragEnd(e){e.target.classList.remove('dragging');document.querySelectorAll('.kcol').forEach(c=>c.classList.remove('drag'));}
+function dragOver(e){e.preventDefault();e.currentTarget.classList.add('drag');}
+function dragLeave(e){e.currentTarget.classList.remove('drag');}
+function drop(e){
+  e.preventDefault();
+  const etapa=e.currentTarget.dataset.etapa;
+  const a=state.alunos.find(x=>x.id===dragId);
+  if(a && a.etapa!==etapa){a.etapa=etapa;save();render();toast(`${a.nome} → ${etapaById(etapa).nome}`);}
+  e.currentTarget.classList.remove('drag');
+}
+
+/* ================= CRUD ALUNO ================= */
+function openStudent(id){
+  editingId=id||null;
+  $('mStudentTitle').textContent=id?'Editar aluno':'Novo aluno';
+  const sel=$('f_etapa');
+  sel.innerHTML=ETAPAS.map(e=>`<option value="${e.id}">${e.nome}</option>`).join('');
+  const a=id?state.alunos.find(x=>x.id===id):{};
+  f_nome.value=a.nome||''; f_serieAtual.value=a.serieAtual||''; f_serieDestino.value=a.serieDestino||'';
+  f_responsavel.value=a.responsavel||''; f_whatsapp.value=a.whatsapp||''; f_email.value=a.email||'';
+  f_periodo.value=a.periodo||''; f_segmento.value=a.segmento||'';
+  f_mensalidade.value=a.mensalidade||''; f_desconto.value=a.desconto||''; f_obs.value=a.obs||'';
+  sel.value=a.etapa||'a_contatar';
+  openModal('mStudent'); setTimeout(()=>f_nome.focus(),50);
+}
+function saveStudent(){
+  if(!f_nome.value.trim()){toast('Informe o nome do aluno');f_nome.focus();return;}
+  const data={
+    nome:f_nome.value.trim(), serieAtual:f_serieAtual.value.trim(), serieDestino:f_serieDestino.value.trim(),
+    periodo:f_periodo.value, segmento:f_segmento.value,
+    responsavel:f_responsavel.value.trim(), whatsapp:f_whatsapp.value.trim(), email:f_email.value.trim(),
+    mensalidade:f_mensalidade.value, desconto:f_desconto.value, etapa:f_etapa.value, obs:f_obs.value.trim()
+  };
+  if(editingId){Object.assign(state.alunos.find(x=>x.id===editingId),data);}
+  else{data.id=uid();state.alunos.push(data);}
+  save();render();closeModal('mStudent');toast(editingId?'Aluno atualizado':'Aluno adicionado');
+}
+function delStudent(id){
+  const a=state.alunos.find(x=>x.id===id);
+  if(confirm(`Excluir "${a.nome}" da lista?`)){state.alunos=state.alunos.filter(x=>x.id!==id);save();render();toast('Aluno removido');}
+}
+function updateMensalidade(id,val){
+  const a=state.alunos.find(x=>x.id===id); if(!a) return;
+  const v=String(val).trim();
+  const novo = v==='' ? '' : String(Math.max(0, Number(v.replace(',','.'))||0));
+  if(a.mensalidade===novo) return;
+  a.mensalidade=novo;
+  save(); render();
+}
+
+/* ================= CONFIG ================= */
+function openConfig(){
+  const c=state.config;
+  c_escola.value=c.escola; c_cnpj.value=c.cnpj; c_ano.value=c.ano; c_endereco.value=c.endereco;
+  c_cidade.value=c.cidade; c_repr.value=c.repr; c_parcelas.value=c.parcelas;
+  openModal('mConfig');
+}
+function saveConfig(){
+  state.config={escola:c_escola.value.trim(),cnpj:c_cnpj.value.trim(),ano:c_ano.value.trim()||'2027',
+    endereco:c_endereco.value.trim(),cidade:c_cidade.value.trim(),repr:c_repr.value.trim(),parcelas:c_parcelas.value.trim()||'12'};
+  save();applyHeader();closeModal('mConfig');toast('Dados da escola salvos');
+}
+function applyHeader(){
+  $('hSchool').textContent=state.config.escola||'Colégio Rosa Machado';
+  $('hYear').textContent=`Controle de alunos • Ano letivo ${state.config.ano||'2027'}`;
+}
+
+/* ================= IMPORT / EXPORT ================= */
+function openImport(){csvArea.value='';openModal('mImport');}
+function importCSV(){
+  const txt=csvArea.value.trim();
+  if(!txt){toast('Cole a lista primeiro');return;}
+  const lines=txt.split(/\r?\n/).filter(l=>l.trim());
+  let start=0;
+  const first=lines[0].toLowerCase();
+  if(first.includes('nome')&&(first.includes('série')||first.includes('serie')||first.includes('respons'))) start=1;
+  let n=0;
+  for(let i=start;i<lines.length;i++){
+    const c=lines[i].split(/[;\t]/).map(s=>s.trim());
+    if(!c[0]) continue;
+    state.alunos.push({id:uid(),nome:c[0]||'',serieAtual:c[1]||'',serieDestino:c[2]||'',
+      periodo:c[3]||'',segmento:c[4]||'',responsavel:c[5]||'',whatsapp:c[6]||'',email:c[7]||'',
+      mensalidade:parseNum(c[8]),desconto:parseNum(c[9]),etapa:'a_contatar',obs:''});
+    n++;
+  }
+  save();render();closeModal('mImport');toast(`${n} aluno(s) importado(s)`);
+}
+function parseNum(s){if(!s)return '';return String(s).replace(/[^\d,.-]/g,'').replace(/\.(?=\d{3})/g,'').replace(',','.');}
+function loadSample(){
+  csvArea.value=
+`Nome; Série atual; Série destino; Período; Segmento; Responsável; WhatsApp; E-mail; Mensalidade; Desconto%
+Maria Eduarda Silva; 4º ano; 5º ano; Manhã; Integral; João Silva; (15) 99999-0001; joao@email.com; 980; 10
+Pedro Henrique Alves; 1º ano; 2º ano; Tarde; Parcial; Ana Alves; (15) 98888-0002; ana@email.com; 1120; 0`;
+}
+function exportData(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');
+  const nome=(state.config.escola||'rematricula').toLowerCase().replace(/[^a-z0-9]+/g,'-');
+  a.href=url;a.download=`backup-${nome}.json`;a.click();URL.revokeObjectURL(url);
+  toast('Backup exportado');
+}
+function exportPlanilha(){
+  const rows=state.alunos;
+  if(!rows.length){toast('Nenhum aluno para exportar');return;}
+  const dec=v=>{const n=Number(v);return (v===''||v==null||isNaN(n))?'':String(n).replace('.',',');};
+  const cols=['Nº','Nome','Série atual','Série destino','Período','Segmento','Responsável',
+    'WhatsApp','E-mail','Mensalidade (R$)','Desconto (%)','Valor líquido (R$)','Etapa','Observações'];
+  const cell=s=>{s=(s==null?'':String(s));return /[";\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;};
+  const linhas=rows.map((a,i)=>[
+    i+1, a.nome, a.serieAtual, a.serieDestino, a.periodo, a.segmento, a.responsavel,
+    a.whatsapp, a.email, dec(a.mensalidade), dec(a.desconto),
+    dec(a.mensalidade?valorLiquido(a):''), etapaById(a.etapa).nome, a.obs
+  ].map(cell).join(';'));
+  const csv='\uFEFF'+[cols.join(';'),...linhas].join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');
+  const nome=(state.config.escola||'rematricula').toLowerCase().replace(/[^a-z0-9]+/g,'-');
+  const hoje=new Date().toISOString().slice(0,10);
+  a.href=url;a.download=`alunos-${nome}-${hoje}.csv`;a.click();URL.revokeObjectURL(url);
+  toast(`Planilha exportada (${rows.length} alunos)`);
+}
+function importData(ev){
+  const file=ev.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=()=>{try{const d=JSON.parse(r.result);
+    if(d.alunos){state=Object.assign({config:state.config,alunos:[]},d);
+      state.alunos.forEach(a=>{if(!a.id)a.id=uid();if(!a.etapa)a.etapa='a_contatar';});
+      save();applyHeader();render();closeModal('mImport');toast('Backup restaurado');}
+    else toast('Arquivo inválido');
+  }catch(e){toast('Não foi possível ler o arquivo');}};
+  r.readAsText(file);ev.target.value='';
+}
+
+/* ================= PERSISTÊNCIA (em memória) ================= */
+/* Observação: artefatos não usam armazenamento do navegador; os dados vivem na sessão.
+   Use "Exportar backup" para guardar e "Restaurar backup" para recarregar. */
+function save(){/* estado mantido em memória; backup via JSON */}
+
+/* ================= CONTRATO ================= */
+function extenso(){return '';}
+function contratoHTML(a){
+  const c=state.config;
+  const hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  const escola=c.escola||'[NOME DA ESCOLA]';
+  const cnpj=c.cnpj||'[CNPJ]';
+  const endereco=c.endereco||'[ENDEREÇO DA ESCOLA]';
+  const cidade=c.cidade||'[CIDADE/UF]';
+  const repr=c.repr||'[RESPONSÁVEL LEGAL]';
+  const parcelas=Number(c.parcelas)||12;
+  const ano=c.ano||'2027';
+  const mensal=valorLiquido(a);
+  const anual=mensal*parcelas;
+  const descLinha=Number(a.desconto)>0
+    ? `<tr><td>Desconto concedido</td><td>${a.desconto}% sobre a mensalidade cheia (${money(a.mensalidade)})</td></tr>` : '';
+  return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+<title>Contrato de Rematrícula - ${esc(a.nome)}</title>
+<style>
+  @page{margin:22mm 20mm}
+  body{font-family:'Georgia',serif;color:#1e2230;font-size:12pt;line-height:1.6;max-width:800px;margin:0 auto;padding:20px}
+  h1{text-align:center;font-size:15pt;margin-bottom:4px}
+  .sub{text-align:center;color:#555;font-size:10pt;margin-bottom:24px}
+  h2{font-size:12pt;border-bottom:1px solid #ccc;padding-bottom:4px;margin-top:22px}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:11pt}
+  td{padding:7px 10px;border:1px solid #ddd;vertical-align:top}
+  td:first-child{width:38%;font-weight:bold;background:#f5f6fa}
+  p{text-align:justify;margin:8px 0}
+  .sign{margin-top:60px;display:flex;justify-content:space-between;gap:40px}
+  .sign div{flex:1;text-align:center;border-top:1px solid #333;padding-top:6px;font-size:10pt}
+  .muted{color:#666;font-size:10pt}
+  .noprint{margin:16px 0;text-align:center}
+  .noprint button{font-family:sans-serif;font-size:13px;font-weight:600;padding:10px 18px;border:none;border-radius:8px;background:#a70409;color:#fff;cursor:pointer;margin:0 5px}
+  .noprint button.g{background:#eef0f7;color:#333}
+  @media print{.noprint{display:none}}
+</style></head><body>
+<div class="noprint">
+  <button onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+  <button class="g" onclick="baixarDoc()">⬇️ Baixar (.doc)</button>
+</div>
+
+<h1>CONTRATO DE PRESTAÇÃO DE SERVIÇOS EDUCACIONAIS</h1>
+<div class="sub">Rematrícula — Ano Letivo ${ano}</div>
+
+<p>Pelo presente instrumento particular, de um lado <b>${esc(escola)}</b>, inscrita no CNPJ sob o nº ${esc(cnpj)}, com sede em ${esc(endereco)}, neste ato representada por ${esc(repr)}, doravante denominada <b>CONTRATADA</b>; e, de outro lado, o(a) responsável abaixo qualificado(a), doravante denominado(a) <b>CONTRATANTE</b>, têm entre si justo e contratado o seguinte:</p>
+
+<h2>1. Identificação do aluno</h2>
+<table>
+  <tr><td>Nome do aluno(a)</td><td>${esc(a.nome)}</td></tr>
+  <tr><td>Série cursada em ${Number(ano)-1||'2026'}</td><td>${esc(a.serieAtual||'—')}</td></tr>
+  <tr><td>Série de rematrícula (${ano})</td><td>${esc(a.serieDestino||'—')}</td></tr>
+  <tr><td>Período / Segmento</td><td>${esc(a.periodo||'—')}${a.segmento?' • '+esc(a.segmento):''}</td></tr>
+</table>
+
+<h2>2. Identificação do responsável (Contratante)</h2>
+<table>
+  <tr><td>Responsável</td><td>${esc(a.responsavel||'—')}</td></tr>
+  <tr><td>Telefone / WhatsApp</td><td>${esc(a.whatsapp||'—')}</td></tr>
+  <tr><td>E-mail</td><td>${esc(a.email||'—')}</td></tr>
+</table>
+
+<h2>3. Objeto e valores</h2>
+<p>A CONTRATADA se obriga a prestar ao aluno(a) os serviços educacionais correspondentes à série indicada, durante o ano letivo de ${ano}, mediante o pagamento da anuidade escolar abaixo discriminada:</p>
+<table>
+  ${descLinha}
+  <tr><td>Valor da mensalidade</td><td>${money(mensal)}</td></tr>
+  <tr><td>Nº de parcelas</td><td>${parcelas}</td></tr>
+  <tr><td>Valor total da anuidade</td><td>${money(anual)}</td></tr>
+</table>
+<p class="muted">A anuidade poderá ser paga em ${parcelas} parcelas mensais e sucessivas, com vencimento na forma acordada entre as partes.</p>
+
+<h2>4. Disposições gerais</h2>
+<p>4.1. O presente contrato tem vigência para o ano letivo de ${ano}, iniciando-se na data de sua assinatura.</p>
+<p>4.2. A rematrícula somente será efetivada mediante a inexistência de débitos anteriores e a assinatura deste instrumento pelo responsável.</p>
+<p>4.3. As partes elegem o foro da comarca de ${esc(cidade)} para dirimir eventuais controvérsias oriundas do presente contrato.</p>
+
+<p style="margin-top:26px">${esc(cidade)}, ${hoje}.</p>
+
+<div class="sign">
+  <div>${esc(escola)}<br><span class="muted">CONTRATADA</span></div>
+  <div>${esc(a.responsavel||'Responsável')}<br><span class="muted">CONTRATANTE</span></div>
+</div>
+
+<script>
+function baixarDoc(){
+  var header="<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'></head><body>";
+  var html=header+document.body.innerHTML.replace(/<div class="noprint">[\\s\\S]*?<\\/div>/,'')+"</body></html>";
+  var blob=new Blob(['\\ufeff'+html],{type:'application/msword'});
+  var url=URL.createObjectURL(blob);var link=document.createElement('a');
+  link.href=url;link.download='Contrato-${esc(a.nome).replace(/[^A-Za-z0-9]+/g,'-')}.doc';link.click();
+}
+<\/script>
+</body></html>`;
+}
+function generateOne(id){
+  const a=state.alunos.find(x=>x.id===id);if(!a)return;
+  if(!state.config.escola){toast('Dica: configure os dados da escola primeiro (⚙️)');}
+  const w=window.open('','_blank');
+  if(!w){toast('Permita pop-ups para gerar o contrato');return;}
+  w.document.write(contratoHTML(a));w.document.close();
+  // avança etapa automaticamente se ainda estiver em atendimento
+  if(a.etapa==='a_contatar'||a.etapa==='contato'||a.etapa==='negociacao'){a.etapa='documento';save();render();}
+}
+function generateAll(){
+  const rows=filteredAlunos();
+  if(!rows.length){toast('Nenhum aluno para gerar contratos');return;}
+  const w=window.open('','_blank');
+  if(!w){toast('Permita pop-ups para gerar os contratos');return;}
+  const parts=rows.map((a,i)=>{
+    let html=contratoHTML(a);
+    // extrai apenas o corpo (entre <body> e </body>) e remove a barra de botões
+    let body=html.split('<body>')[1].split('</body>')[0].replace(/<div class="noprint">[\s\S]*?<\/div>/,'');
+    return `<div style="page-break-after:${i<rows.length-1?'always':'auto'}">${body}</div>`;
+  }).join('');
+  w.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Contratos de Rematrícula (${rows.length})</title>
+  <style>@page{margin:22mm 20mm}body{font-family:Georgia,serif;color:#1e2230;font-size:12pt;line-height:1.6;max-width:800px;margin:0 auto;padding:20px}
+  h1{text-align:center;font-size:15pt;margin-bottom:4px}.sub{text-align:center;color:#555;font-size:10pt;margin-bottom:24px}
+  h2{font-size:12pt;border-bottom:1px solid #ccc;padding-bottom:4px;margin-top:22px}table{width:100%;border-collapse:collapse;margin:10px 0;font-size:11pt}
+  td{padding:7px 10px;border:1px solid #ddd}td:first-child{width:38%;font-weight:bold;background:#f5f6fa}p{text-align:justify;margin:8px 0}
+  .sign{margin-top:60px;display:flex;justify-content:space-between;gap:40px}.sign div{flex:1;text-align:center;border-top:1px solid #333;padding-top:6px;font-size:10pt}
+  .muted{color:#666;font-size:10pt}.noprint{margin:16px 0;text-align:center}.noprint button{font-family:sans-serif;font-size:13px;font-weight:600;padding:10px 18px;border:none;border-radius:8px;background:#a70409;color:#fff;cursor:pointer}
+  @media print{.noprint{display:none}}</style></head><body>
+  <div class="noprint"><button onclick="window.print()">🖨️ Imprimir / Salvar todos em PDF</button></div>
+  ${parts}</body></html>`);
+  w.document.close();
+  toast(`${rows.length} contrato(s) gerado(s)`);
+}
+
+/* ================= WHATSAPP ================= */
+function sendWhats(id){
+  const a=state.alunos.find(x=>x.id===id);if(!a)return;
+  const fone=(a.whatsapp||'').replace(/\D/g,'');
+  const escola=state.config.escola||'nossa escola';
+  const msg=`Olá${a.responsavel?', '+a.responsavel:''}! Aqui é da ${escola}. `+
+    `Estamos com o período de rematrícula do(a) ${a.nome} aberto`+
+    `${a.serieDestino?' para o(a) '+a.serieDestino:''}. Podemos seguir com a documentação? 😊`;
+  const base=fone.length>=10?`https://wa.me/55${fone}?text=`:`https://wa.me/?text=`;
+  window.open(base+encodeURIComponent(msg),'_blank');
+}
+
+/* ================= MODAIS ================= */
+function openModal(id){$(id).classList.remove('hidden');}
+function closeModal(id){$(id).classList.add('hidden');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.overlay').forEach(o=>o.classList.add('hidden'));});
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('mousedown',e=>{if(e.target===o)o.classList.add('hidden');}));
+
+/* ================= INIT ================= */
+function initFilter(){
+  $('filterEtapa').innerHTML='<option value="">Todas as etapas</option>'+ETAPAS.map(e=>`<option value="${e.id}">${e.nome}</option>`).join('');
+  const series=[...new Set(state.alunos.map(a=>a.serieAtual).filter(Boolean))];
+  const pers=[...new Set(state.alunos.map(a=>a.periodo).filter(Boolean))];
+  $('filterSerie').innerHTML='<option value="">Todas as séries</option>'+series.map(s=>`<option>${s}</option>`).join('');
+  $('filterPeriodo').innerHTML='<option value="">Todos os períodos</option>'+pers.map(p=>`<option>${p}</option>`).join('');
+}
+if(!state.alunos.length && typeof SEED_ALUNOS!=='undefined'){
+  state.alunos = SEED_ALUNOS.map(a=>Object.assign({id:uid()},a));
+}
+initFilter();applyHeader();render();
+</script>
+</body>
+</html>
