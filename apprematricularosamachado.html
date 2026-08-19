@@ -717,95 +717,94 @@ function importData(ev){
 function save(){/* estado mantido em memória; backup via JSON */}
 
 /* ================= CONTRATO ================= */
-function extenso(){return '';}
-function contratoHTML(a){
-  const c=state.config;
-  const hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
-  const escola=c.escola||'[NOME DA ESCOLA]';
-  const cnpj=c.cnpj||'[CNPJ]';
-  const endereco=c.endereco||'[ENDEREÇO DA ESCOLA]';
-  const cidade=c.cidade||'[CIDADE/UF]';
-  const repr=c.repr||'[RESPONSÁVEL LEGAL]';
-  const parcelas=Number(c.parcelas)||12;
-  const ano=c.ano||'2027';
+const CIRC_CSS=`
+@page{margin:15mm 15mm}
+*{box-sizing:border-box}
+body{font-family:'Segoe UI',Arial,sans-serif;color:#2a2a2a;font-size:11.5pt;line-height:1.5;max-width:760px;margin:0 auto;padding:16px}
+.cbanner{background:linear-gradient(135deg,#8a0307,#a70409 60%,#c11424);color:#fff;border-radius:12px;padding:16px 20px;text-align:center;margin-bottom:16px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.cbanner h1{margin:0;font-size:16pt;letter-spacing:.5px}
+.cbanner .yr{font-size:11pt;opacity:.92;margin-top:2px}
+.cbanner .sch{font-size:11pt;font-weight:600;margin-top:6px}
+.alunobox{border:2px solid #a70409;border-radius:10px;padding:8px 14px;margin:0 0 16px;font-size:12pt}
+.alunobox b{color:#a70409}
+p{margin:9px 0;text-align:justify}
+ul.opts{margin:6px 0 10px 4px;padding-left:18px}
+ul.opts li{margin:4px 0}
+.grid2{display:flex;gap:12px;margin:14px 0}
+.infobox{flex:1;border:1px solid #e2c9ca;border-radius:10px;padding:10px 14px;background:#fdf3f3;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.infobox h3{margin:0 0 4px;font-size:10.5pt;color:#a70409;text-transform:uppercase;letter-spacing:.4px}
+.infobox div{font-size:10.5pt}
+.closing{margin-top:16px}
+.cut{border-top:2px dashed #999;text-align:center;color:#777;font-size:10pt;margin:22px 0 14px;padding-top:6px}
+.ficha{border:1px solid #ccc;border-radius:10px;padding:14px 16px}
+.ficha h2{margin:0 0 2px;font-size:13pt;color:#a70409;text-align:center}
+.ficha .sch2{text-align:center;font-size:10pt;color:#555;margin-bottom:10px}
+.fline{margin:9px 0;font-size:11pt}
+.wide{display:block;border-bottom:1px solid #333;height:20px;margin:6px 0}
+.obs{font-size:10pt;color:#555;margin-top:10px}
+.sign2{margin-top:34px;display:flex;justify-content:space-between;gap:30px;align-items:flex-end}
+.sign2 .s{flex:1;border-top:1px solid #333;text-align:center;padding-top:5px;font-size:10pt}
+.foot{text-align:center;color:#777;font-size:9.5pt;margin-top:14px}
+.noprint{margin:14px 0;text-align:center}
+.noprint button{font-family:sans-serif;font-size:13px;font-weight:600;padding:10px 18px;border:none;border-radius:8px;background:#a70409;color:#fff;cursor:pointer;margin:0 5px}
+.noprint button.g{background:#eef0f7;color:#333}
+@media print{.noprint{display:none}}
+`;
+function circularValores(a){
+  const c=state.config;const parcelas=Number(c.parcelas)||12;
   const mensal=valorLiquido(a);
-  const anual=mensal*parcelas;
-  const descLinha=Number(a.desconto)>0
-    ? `<tr><td>Desconto concedido</td><td>${money(a.desconto)} de desconto sobre a mensalidade cheia (${money(a.mensalidade)})</td></tr>` : '';
+  const tem=Number(a.mensalidade)>0 && mensal>0;
+  return {mensalTxt: tem?money(mensal):'____________', anualTxt: tem?money(mensal*parcelas):'____________'};
+}
+function circularBody(a){
+  const c=state.config;const ano=c.ano||'2027';const escola=c.escola||'Colégio Rosa Machado';
+  const v=circularValores(a);
+  const anoDest=esc(a.serieDestino||'________________________');
+  const periodo=esc(a.periodo||'________________________');
+  return `
+  <div class="cbanner"><h1>CIRCULAR DE RENOVAÇÃO DE MATRÍCULA</h1><div class="yr">Ano Letivo ${ano}</div><div class="sch">${esc(escola)}</div></div>
+  <div class="alunobox"><b>ALUNO(A):</b> ${esc(a.nome)}</div>
+  <p>Senhores Pais e Responsáveis,</p>
+  <p>É com alegria que iniciamos o período de renovação de matrícula para ${ano}. Reafirmamos nosso compromisso de oferecer o melhor na continuidade do nosso trabalho e, nessa trajetória, desejamos que seu(sua) filho(a) permaneça conosco.</p>
+  <p>O valor proposto para a mensalidade de ${ano} será de <b>R$ ${v.mensalTxt}</b> (anuidade de <b>R$ ${v.anualTxt}</b>), desde que pagas na data do vencimento, da seguinte forma:</p>
+  <ul class="opts"><li><b>Renovação anual (garantia da vaga):</b> parcela com desconto conforme as opções do controle de vagas abaixo.</li></ul>
+  <p>Para mudança de período ou opção pelo integral, favor entrar em contato com a secretaria. Alterações realizadas após o período de rematrícula ou o início das aulas serão acrescidas ao valor das parcelas já pagas.</p>
+  <div class="grid2">
+    <div class="infobox"><h3>Formas de pagamento</h3><div>PIX: <b>colegiorosamachado@gmail.com</b><br>ou em dinheiro na secretaria do colégio.</div></div>
+    <div class="infobox"><h3>Prazos</h3><div><b>Entrega da ficha:</b> até 21/09 — preenchida e em envelope.<br><b>Abertura de vagas:</b> a partir de 29/09, as vagas serão oferecidas a alunos de outras unidades.</div></div>
+  </div>
+  <div class="closing"><p>Atenciosamente,</p><p><b>A Direção</b><br>${esc(escola)}</p></div>
+  <div class="cut">✂  preencher, recortar e devolver em envelope  ✂</div>
+  <div class="ficha">
+    <h2>CONTROLE DE VAGAS ${ano}</h2>
+    <div class="sch2">${esc(escola)}</div>
+    <div class="fline"><b>Aluno(a):</b> ${esc(a.nome)}</div>
+    <div class="fline"><b>Ano:</b> ${anoDest} &nbsp;&nbsp;&nbsp; <b>Período:</b> ${periodo}</div>
+    <div class="fline">Opção para acerto da 1ª parcela / anuidade (especificar a condição escolhida):</div>
+    <span class="wide"></span><span class="wide"></span>
+    <div class="obs"><b>Obs.</b> Temos opções de parcelamento no cartão de crédito, com os juros da maquininha.</div>
+    <div class="sign2"><div class="s">Assinatura do Responsável</div><div class="s">Data: ____ / ____ / ${ano}</div></div>
+  </div>
+  <div class="foot">Dúvidas? Fale com a secretaria do colégio.</div>`;
+}
+function contratoHTML(a){
   return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
-<title>Contrato de Rematrícula - ${esc(a.nome)}</title>
-<style>
-  @page{margin:22mm 20mm}
-  body{font-family:'Georgia',serif;color:#1e2230;font-size:12pt;line-height:1.6;max-width:800px;margin:0 auto;padding:20px}
-  h1{text-align:center;font-size:15pt;margin-bottom:4px}
-  .sub{text-align:center;color:#555;font-size:10pt;margin-bottom:24px}
-  h2{font-size:12pt;border-bottom:1px solid #ccc;padding-bottom:4px;margin-top:22px}
-  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:11pt}
-  td{padding:7px 10px;border:1px solid #ddd;vertical-align:top}
-  td:first-child{width:38%;font-weight:bold;background:#f5f6fa}
-  p{text-align:justify;margin:8px 0}
-  .sign{margin-top:60px;display:flex;justify-content:space-between;gap:40px}
-  .sign div{flex:1;text-align:center;border-top:1px solid #333;padding-top:6px;font-size:10pt}
-  .muted{color:#666;font-size:10pt}
-  .noprint{margin:16px 0;text-align:center}
-  .noprint button{font-family:sans-serif;font-size:13px;font-weight:600;padding:10px 18px;border:none;border-radius:8px;background:#a70409;color:#fff;cursor:pointer;margin:0 5px}
-  .noprint button.g{background:#eef0f7;color:#333}
-  @media print{.noprint{display:none}}
-</style></head><body>
+<title>Circular de Renovação - ${esc(a.nome)}</title>
+<style>${CIRC_CSS}</style></head><body>
 <div class="noprint">
   <button onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
   <button class="g" onclick="baixarDoc()">⬇️ Baixar (.doc)</button>
 </div>
-
-<h1>CONTRATO DE PRESTAÇÃO DE SERVIÇOS EDUCACIONAIS</h1>
-<div class="sub">Rematrícula — Ano Letivo ${ano}</div>
-
-<p>Pelo presente instrumento particular, de um lado <b>${esc(escola)}</b>, inscrita no CNPJ sob o nº ${esc(cnpj)}, com sede em ${esc(endereco)}, neste ato representada por ${esc(repr)}, doravante denominada <b>CONTRATADA</b>; e, de outro lado, o(a) responsável abaixo qualificado(a), doravante denominado(a) <b>CONTRATANTE</b>, têm entre si justo e contratado o seguinte:</p>
-
-<h2>1. Identificação do aluno</h2>
-<table>
-  <tr><td>Nome do aluno(a)</td><td>${esc(a.nome)}</td></tr>
-  <tr><td>Série cursada em ${Number(ano)-1||'2026'}</td><td>${esc(a.serieAtual||'—')}</td></tr>
-  <tr><td>Série de rematrícula (${ano})</td><td>${esc(a.serieDestino||'—')}</td></tr>
-  <tr><td>Período / Segmento</td><td>${esc(a.periodo||'—')}${a.segmento?' • '+esc(a.segmento):''}</td></tr>
-</table>
-
-<h2>2. Identificação do responsável (Contratante)</h2>
-<table>
-  <tr><td>Responsável</td><td>${esc(a.responsavel||'—')}</td></tr>
-  <tr><td>Telefone / WhatsApp</td><td>${esc(a.whatsapp||'—')}</td></tr>
-  <tr><td>E-mail</td><td>${esc(a.email||'—')}</td></tr>
-</table>
-
-<h2>3. Objeto e valores</h2>
-<p>A CONTRATADA se obriga a prestar ao aluno(a) os serviços educacionais correspondentes à série indicada, durante o ano letivo de ${ano}, mediante o pagamento da anuidade escolar abaixo discriminada:</p>
-<table>
-  ${descLinha}
-  <tr><td>Valor da mensalidade</td><td>${money(mensal)}</td></tr>
-  <tr><td>Nº de parcelas</td><td>${parcelas}</td></tr>
-  <tr><td>Valor total da anuidade</td><td>${money(anual)}</td></tr>
-</table>
-<p class="muted">A anuidade poderá ser paga em ${parcelas} parcelas mensais e sucessivas, com vencimento na forma acordada entre as partes.</p>
-
-<h2>4. Disposições gerais</h2>
-<p>4.1. O presente contrato tem vigência para o ano letivo de ${ano}, iniciando-se na data de sua assinatura.</p>
-<p>4.2. A rematrícula somente será efetivada mediante a inexistência de débitos anteriores e a assinatura deste instrumento pelo responsável.</p>
-<p>4.3. As partes elegem o foro da comarca de ${esc(cidade)} para dirimir eventuais controvérsias oriundas do presente contrato.</p>
-
-<p style="margin-top:26px">${esc(cidade)}, ${hoje}.</p>
-
-<div class="sign">
-  <div>${esc(escola)}<br><span class="muted">CONTRATADA</span></div>
-  <div>${esc(a.responsavel||'Responsável')}<br><span class="muted">CONTRATANTE</span></div>
-</div>
-
+${circularBody(a)}
 <script>
 function baixarDoc(){
-  var header="<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'></head><body>";
-  var html=header+document.body.innerHTML.replace(/<div class="noprint">[\\s\\S]*?<\\/div>/,'')+"</body></html>";
+  var css=document.head.querySelector('style')?document.head.querySelector('style').outerHTML:'';
+  var header="<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'>"+css+"</head><body>";
+  var body=document.body.innerHTML.replace(/<div class="noprint">[\\s\\S]*?<\\/div>/,'');
+  var html=header+body+"</body></html>";
   var blob=new Blob(['\\ufeff'+html],{type:'application/msword'});
   var url=URL.createObjectURL(blob);var link=document.createElement('a');
-  link.href=url;link.download='Contrato-${esc(a.nome).replace(/[^A-Za-z0-9]+/g,'-')}.doc';link.click();
+  link.href=url;link.download='Circular-Renovacao-${esc(a.nome).replace(/[^A-Za-z0-9]+/g,'-')}.doc';link.click();
 }
 <\/script>
 </body></html>`;
@@ -814,36 +813,23 @@ function generateOne(id){
   const a=state.alunos.find(x=>x.id===id);if(!a)return;
   if(!state.config.escola){toast('Dica: configure os dados da escola primeiro (⚙️)');}
   const w=window.open('','_blank');
-  if(!w){toast('Permita pop-ups para gerar o contrato');return;}
+  if(!w){toast('Permita pop-ups para gerar o documento');return;}
   w.document.write(contratoHTML(a));w.document.close();
-  // avança etapa automaticamente se ainda estiver em atendimento
   if(a.etapa==='a_contatar'||a.etapa==='contato'||a.etapa==='negociacao'){a.etapa='documento';save();render();}
 }
 function generateAll(){
   const rows=filteredAlunos();
-  if(!rows.length){toast('Nenhum aluno para gerar contratos');return;}
+  if(!rows.length){toast('Nenhum aluno para gerar');return;}
   const w=window.open('','_blank');
-  if(!w){toast('Permita pop-ups para gerar os contratos');return;}
-  const parts=rows.map((a,i)=>{
-    let html=contratoHTML(a);
-    // extrai apenas o corpo (entre <body> e </body>) e remove a barra de botões
-    let body=html.split('<body>')[1].split('</body>')[0].replace(/<div class="noprint">[\s\S]*?<\/div>/,'');
-    return `<div style="page-break-after:${i<rows.length-1?'always':'auto'}">${body}</div>`;
-  }).join('');
-  w.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Contratos de Rematrícula (${rows.length})</title>
-  <style>@page{margin:22mm 20mm}body{font-family:Georgia,serif;color:#1e2230;font-size:12pt;line-height:1.6;max-width:800px;margin:0 auto;padding:20px}
-  h1{text-align:center;font-size:15pt;margin-bottom:4px}.sub{text-align:center;color:#555;font-size:10pt;margin-bottom:24px}
-  h2{font-size:12pt;border-bottom:1px solid #ccc;padding-bottom:4px;margin-top:22px}table{width:100%;border-collapse:collapse;margin:10px 0;font-size:11pt}
-  td{padding:7px 10px;border:1px solid #ddd}td:first-child{width:38%;font-weight:bold;background:#f5f6fa}p{text-align:justify;margin:8px 0}
-  .sign{margin-top:60px;display:flex;justify-content:space-between;gap:40px}.sign div{flex:1;text-align:center;border-top:1px solid #333;padding-top:6px;font-size:10pt}
-  .muted{color:#666;font-size:10pt}.noprint{margin:16px 0;text-align:center}.noprint button{font-family:sans-serif;font-size:13px;font-weight:600;padding:10px 18px;border:none;border-radius:8px;background:#a70409;color:#fff;cursor:pointer}
-  @media print{.noprint{display:none}}</style></head><body>
+  if(!w){toast('Permita pop-ups para gerar');return;}
+  const parts=rows.map((a,i)=>`<div style="page-break-after:${i<rows.length-1?'always':'auto'}">${circularBody(a)}</div>`).join('');
+  w.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Circulares de Renovação (${rows.length})</title>
+  <style>${CIRC_CSS}</style></head><body>
   <div class="noprint"><button onclick="window.print()">🖨️ Imprimir / Salvar todos em PDF</button></div>
   ${parts}</body></html>`);
   w.document.close();
-  toast(`${rows.length} contrato(s) gerado(s)`);
+  toast(`${rows.length} documento(s) gerado(s)`);
 }
-
 /* ================= WHATSAPP ================= */
 function sendWhats(id){
   const a=state.alunos.find(x=>x.id===id);if(!a)return;
