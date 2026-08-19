@@ -714,7 +714,7 @@ function importData(ev){
 /* ================= PERSISTÊNCIA (em memória) ================= */
 /* Observação: artefatos não usam armazenamento do navegador; os dados vivem na sessão.
    Use "Exportar backup" para guardar e "Restaurar backup" para recarregar. */
-function save(){/* estado mantido em memória; backup via JSON */}
+var DB_VER='2027-08-19a';function save(){try{localStorage.setItem('rm_db_v1',JSON.stringify({v:DB_VER,alunos:state.alunos,config:state.config}));}catch(e){}}function loadState(){try{var d=JSON.parse(localStorage.getItem('rm_db_v1')||'null');if(d&&d.v===DB_VER&&Array.isArray(d.alunos)&&d.alunos.length){state.alunos=d.alunos;if(d.config){state.config=Object.assign(state.config||{},d.config);}}}catch(e){}}
 
 /* ================= CONTRATO ================= */
 const CIRC_CSS=`
@@ -859,7 +859,7 @@ function initFilter(){
 if(!state.alunos.length && typeof SEED_ALUNOS!=='undefined'){
   state.alunos = SEED_ALUNOS.map(a=>Object.assign({id:uid()},a));
 }
-initFilter();applyHeader();render();
+loadState();save();initFilter();applyHeader();render();
 </script>
 </body>
 </html>
