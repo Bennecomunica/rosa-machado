@@ -754,7 +754,7 @@ function circularValores(a){
   const c=state.config;const parcelas=Number(c.parcelas)||12;
   const mensal=valorLiquido(a);
   const tem=Number(a.mensalidade)>0 && mensal>0;
-  return {mensalTxt: tem?money(mensal):'____________', anualTxt: tem?money(mensal*parcelas):'____________'};
+  return {mensalTxt: tem?money(mensal):'R$ ____________', anualTxt: tem?money(mensal*parcelas):'R$ ____________'};
 }
 function circularBody(a){
   const c=state.config;const ano=c.ano||'2027';const escola=c.escola||'Colégio Rosa Machado';
@@ -766,7 +766,7 @@ function circularBody(a){
   <div class="alunobox"><b>ALUNO(A):</b> ${esc(a.nome)}</div>
   <p>Senhores Pais e Responsáveis,</p>
   <p>É com alegria que iniciamos o período de renovação de matrícula para ${ano}. Reafirmamos nosso compromisso de oferecer o melhor na continuidade do nosso trabalho e, nessa trajetória, desejamos que seu(sua) filho(a) permaneça conosco.</p>
-  <p>O valor proposto para a mensalidade de ${ano} será de <b>R$ ${v.mensalTxt}</b> (anuidade de <b>R$ ${v.anualTxt}</b>), desde que pagas na data do vencimento, da seguinte forma:</p>
+  <p>O valor proposto para a mensalidade de ${ano} será de <b>${v.mensalTxt}</b> (anuidade de <b>${v.anualTxt}</b>), desde que pagas na data do vencimento, da seguinte forma:</p>
   <ul class="opts"><li><b>Renovação anual (garantia da vaga):</b> parcela com desconto conforme as opções do controle de vagas abaixo.</li></ul>
   <p>Para mudança de período ou opção pelo integral, favor entrar em contato com a secretaria. Alterações realizadas após o período de rematrícula ou o início das aulas serão acrescidas ao valor das parcelas já pagas.</p>
   <div class="grid2">
