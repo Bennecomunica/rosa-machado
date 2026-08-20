@@ -186,7 +186,8 @@
   code.k{background:#eef0f7;padding:2px 6px;border-radius:5px;font-size:12px}
   @media(max-width:640px){.fgrid{grid-template-columns:1fr}.wrap{padding:16px 14px 50px}header{padding:14px 16px}.hide-sm{display:none}}
 </style>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script><script>var firebaseConfig={apiKey:"AIzaSyDpB9TdVZ1CSR7pasLOxib_Y0m2wI0TXZ4",authDomain:"rosa-machado.firebaseapp.com",projectId:"rosa-machado",storageBucket:"rosa-machado.firebasestorage.app",messagingSenderId:"155380615388",appId:"1:155380615388:web:d812eaedd603e2fe73cc19"};try{firebase.initializeApp(firebaseConfig);}catch(e){console.warn("fb init",e);}</script></head>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script><script>var firebaseConfig={apiKey:"AIzaSyDpB9TdVZ1CSR7pasLOxib_Y0m2wI0TXZ4",authDomain:"rosa-machado.firebaseapp.com",projectId:"rosa-machado",storageBucket:"rosa-machado.firebasestorage.app",messagingSenderId:"155380615388",appId:"1:155380615388:web:d812eaedd603e2fe73cc19"};try{firebase.initializeApp(firebaseConfig);}catch(e){console.warn("fb init",e);}</script><script src="circular.js"></script>
+</head>
 <body><div id="loginOverlay" style="display:flex;position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#7a0d16,#c1121f);align-items:center;justify-content:center;font-family:'Segoe UI',Arial,sans-serif"><div style="background:#fff;border-radius:16px;padding:32px 28px;width:340px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center"><div style="font-weight:800;font-size:18px;color:#1b2a56;margin-bottom:4px">Colegio Rosa Machado</div><div style="color:#7a8296;font-size:13px;margin-bottom:20px">Controle de Rematricula</div><input id="loginEmail" type="email" placeholder="E-mail" autocomplete="username" style="width:100%;padding:11px 12px;margin:6px 0;border:1px solid #d8dae2;border-radius:8px;font-size:14px"><input id="loginSenha" type="password" placeholder="Senha" autocomplete="current-password" onkeydown="if(event.key==='Enter')_login()" style="width:100%;padding:11px 12px;margin:6px 0;border:1px solid #d8dae2;border-radius:8px;font-size:14px"><div id="loginErro" style="color:#c1121f;font-size:12.5px;min-height:16px;margin:4px 0"></div><button id="loginBtn" onclick="_login()" style="width:100%;padding:12px;margin-top:6px;border:none;border-radius:8px;background:#1b2a56;color:#fff;font-size:15px;font-weight:600;cursor:pointer">Entrar</button></div></div><button id="btnSair" onclick="_logout()" style="display:none;position:fixed;bottom:14px;left:14px;z-index:9999;background:#1b2a56;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Segoe UI',Arial,sans-serif">Sair</button>
 <header>
   <div class="hrow">
@@ -717,119 +718,7 @@ function importData(ev){
 var DB_VER='2027-08-19a';var _docRef=null,_saveT=null,_cloudReady=false;function _cacheSave(){try{localStorage.setItem('rm_db_v1',JSON.stringify({v:DB_VER,alunos:state.alunos,config:state.config}));}catch(e){}}function save(){_cacheSave();if(_docRef&&_cloudReady){clearTimeout(_saveT);_saveT=setTimeout(function(){_docRef.set({v:DB_VER,alunos:state.alunos,config:state.config,updatedAt:Date.now()}).catch(function(e){console.warn('cloud save',e);});},400);}}function loadState(){try{var d=JSON.parse(localStorage.getItem('rm_db_v1')||'null');if(d&&d.v===DB_VER&&Array.isArray(d.alunos)&&d.alunos.length){state.alunos=d.alunos;if(d.config){state.config=Object.assign(state.config||{},d.config);}}}catch(e){}}function _startCloud(){try{var db=firebase.firestore();_docRef=db.collection('estado').doc('atual');_docRef.onSnapshot(function(snap){if(snap&&snap.exists){var d=snap.data();if(d&&Array.isArray(d.alunos)&&d.alunos.length){state.alunos=d.alunos;if(d.config){state.config=Object.assign(state.config||{},d.config);}_cacheSave();initFilter();applyHeader();render();}_cloudReady=true;}else{_cloudReady=true;save();}},function(err){console.warn('snapshot',err);});}catch(e){console.warn('startCloud',e);}}function _fbEl(id){return document.getElementById(id);}function _login(){var e=(_fbEl('loginEmail').value||'').trim();var p=_fbEl('loginSenha').value||'';var er=_fbEl('loginErro');er.textContent='';_fbEl('loginBtn').disabled=true;firebase.auth().signInWithEmailAndPassword(e,p)['catch'](function(ex){er.textContent='E-mail ou senha invalidos.';})['finally'](function(){_fbEl('loginBtn').disabled=false;});}function _logout(){try{firebase.auth().signOut();}catch(e){}location.reload();}function _initAuth(){try{firebase.auth().onAuthStateChanged(function(user){var ov=_fbEl('loginOverlay');var sb=_fbEl('btnSair');if(user){if(ov)ov.style.display='none';if(sb)sb.style.display='block';_startCloud();}else{if(ov)ov.style.display='flex';if(sb)sb.style.display='none';}});}catch(e){console.warn('initAuth',e);}}
 
 /* ================= CONTRATO ================= */
-const CIRC_CSS=`
-@page{margin:15mm 15mm}
-*{box-sizing:border-box}
-body{font-family:'Segoe UI',Arial,sans-serif;color:#2a2a2a;font-size:11.5pt;line-height:1.5;max-width:760px;margin:0 auto;padding:16px}
-.cbanner{background:linear-gradient(135deg,#8a0307,#a70409 60%,#c11424);color:#fff;border-radius:12px;padding:16px 20px;text-align:center;margin-bottom:16px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.cbanner h1{margin:0;font-size:16pt;letter-spacing:.5px}
-.cbanner .yr{font-size:11pt;opacity:.92;margin-top:2px}
-.cbanner .sch{font-size:11pt;font-weight:600;margin-top:6px}
-.alunobox{border:2px solid #a70409;border-radius:10px;padding:8px 14px;margin:0 0 16px;font-size:12pt}
-.alunobox b{color:#a70409}
-p{margin:9px 0;text-align:justify}
-ul.opts{margin:6px 0 10px 4px;padding-left:18px}
-ul.opts li{margin:4px 0}
-.grid2{display:flex;gap:12px;margin:14px 0}
-.infobox{flex:1;border:1px solid #e2c9ca;border-radius:10px;padding:10px 14px;background:#fdf3f3;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.infobox h3{margin:0 0 4px;font-size:10.5pt;color:#a70409;text-transform:uppercase;letter-spacing:.4px}
-.infobox div{font-size:10.5pt}
-.closing{margin-top:16px}
-.cut{border-top:2px dashed #999;text-align:center;color:#777;font-size:10pt;margin:22px 0 14px;padding-top:6px}
-.ficha{border:1px solid #ccc;border-radius:10px;padding:14px 16px}
-.ficha h2{margin:0 0 2px;font-size:13pt;color:#a70409;text-align:center}
-.ficha .sch2{text-align:center;font-size:10pt;color:#555;margin-bottom:10px}
-.fline{margin:9px 0;font-size:11pt}
-.wide{display:block;border-bottom:1px solid #333;height:20px;margin:6px 0}
-.obs{font-size:10pt;color:#555;margin-top:10px}
-.sign2{margin-top:34px;display:flex;justify-content:space-between;gap:30px;align-items:flex-end}
-.sign2 .s{flex:1;border-top:1px solid #333;text-align:center;padding-top:5px;font-size:10pt}
-.foot{text-align:center;color:#777;font-size:9.5pt;margin-top:14px}
-.noprint{margin:14px 0;text-align:center}
-.noprint button{font-family:sans-serif;font-size:13px;font-weight:600;padding:10px 18px;border:none;border-radius:8px;background:#a70409;color:#fff;cursor:pointer;margin:0 5px}
-.noprint button.g{background:#eef0f7;color:#333}
-@media print{.noprint{display:none}}
-`;
-function circularValores(a){
-  const c=state.config;const parcelas=Number(c.parcelas)||12;
-  const mensal=valorLiquido(a);
-  const tem=Number(a.mensalidade)>0 && mensal>0;
-  return {mensalTxt: tem?money(mensal):'R$ ____________', anualTxt: tem?money(mensal*parcelas):'R$ ____________'};
-}
-function circularBody(a){
-  const c=state.config;const ano=c.ano||'2027';const escola=c.escola||'Colégio Rosa Machado';
-  const v=circularValores(a);
-  const anoDest=esc(a.serieDestino||'________________________');
-  const periodo=esc(a.periodo||'________________________');
-  return `
-  <div class="cbanner"><h1>CIRCULAR DE RENOVAÇÃO DE MATRÍCULA</h1><div class="yr">Ano Letivo ${ano}</div><div class="sch">${esc(escola)}</div></div>
-  <div class="alunobox"><b>ALUNO(A):</b> ${esc(a.nome)}</div>
-  <p>Senhores Pais e Responsáveis,</p>
-  <p>É com alegria que iniciamos o período de renovação de matrícula para ${ano}. Reafirmamos nosso compromisso de oferecer o melhor na continuidade do nosso trabalho e, nessa trajetória, desejamos que seu(sua) filho(a) permaneça conosco.</p>
-  <p>O valor proposto para a mensalidade de ${ano} será de <b>${v.mensalTxt}</b> (anuidade de <b>${v.anualTxt}</b>), desde que pagas na data do vencimento, da seguinte forma:</p>
-  <ul class="opts"><li><b>Renovação anual (garantia da vaga):</b> parcela com desconto conforme as opções do controle de vagas abaixo.</li></ul>
-  <p>Para mudança de período ou opção pelo integral, favor entrar em contato com a secretaria. Alterações realizadas após o período de rematrícula ou o início das aulas serão acrescidas ao valor das parcelas já pagas.</p>
-  <div class="grid2">
-    <div class="infobox"><h3>Formas de pagamento</h3><div>PIX: <b>colegiorosamachado@gmail.com</b><br>ou em dinheiro na secretaria do colégio.</div></div>
-    <div class="infobox"><h3>Prazos</h3><div><b>Entrega da ficha:</b> até 21/09 — preenchida e em envelope.<br><b>Abertura de vagas:</b> a partir de 29/09, as vagas serão oferecidas a alunos de outras unidades.</div></div>
-  </div>
-  <div class="closing"><p>Atenciosamente,</p><p><b>A Direção</b><br>${esc(escola)}</p></div>
-  <div class="cut">✂  preencher, recortar e devolver em envelope  ✂</div>
-  <div class="ficha">
-    <h2>CONTROLE DE VAGAS ${ano}</h2>
-    <div class="sch2">${esc(escola)}</div>
-    <div class="fline"><b>Aluno(a):</b> ${esc(a.nome)}</div>
-    <div class="fline"><b>Ano:</b> ${anoDest} &nbsp;&nbsp;&nbsp; <b>Período:</b> ${periodo}</div>
-    <div class="fline">Opção para acerto da 1ª parcela / anuidade (especificar a condição escolhida):</div>
-    <span class="wide"></span><span class="wide"></span>
-    <div class="obs"><b>Obs.</b> Temos opções de parcelamento no cartão de crédito, com os juros da maquininha.</div>
-    <div class="sign2"><div class="s">Assinatura do Responsável</div><div class="s">Data: ____ / ____ / ${ano}</div></div>
-  </div>
-  <div class="foot">Dúvidas? Fale com a secretaria do colégio.</div>`;
-}
-function contratoHTML(a){
-  return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
-<title>Circular de Renovação - ${esc(a.nome)}</title>
-<style>${CIRC_CSS}</style></head><body>
-<div class="noprint">
-  <button onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
-  <button class="g" onclick="baixarDoc()">⬇️ Baixar (.doc)</button>
-</div>
-${circularBody(a)}
-<script>
-function baixarDoc(){
-  var css=document.head.querySelector('style')?document.head.querySelector('style').outerHTML:'';
-  var header="<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'>"+css+"</head><body>";
-  var body=document.body.innerHTML.replace(/<div class="noprint">[\\s\\S]*?<\\/div>/,'');
-  var html=header+body+"</body></html>";
-  var blob=new Blob(['\\ufeff'+html],{type:'application/msword'});
-  var url=URL.createObjectURL(blob);var link=document.createElement('a');
-  link.href=url;link.download='Circular-Renovacao-${esc(a.nome).replace(/[^A-Za-z0-9]+/g,'-')}.doc';link.click();
-}
-<\/script>
-</body></html>`;
-}
-function generateOne(id){
-  const a=state.alunos.find(x=>x.id===id);if(!a)return;
-  if(!state.config.escola){toast('Dica: configure os dados da escola primeiro (⚙️)');}
-  const w=window.open('','_blank');
-  if(!w){toast('Permita pop-ups para gerar o documento');return;}
-  w.document.write(contratoHTML(a));w.document.close();
-  if(a.etapa==='a_contatar'||a.etapa==='contato'||a.etapa==='negociacao'){a.etapa='documento';save();render();}
-}
-function generateAll(){
-  const rows=filteredAlunos();
-  if(!rows.length){toast('Nenhum aluno para gerar');return;}
-  const w=window.open('','_blank');
-  if(!w){toast('Permita pop-ups para gerar');return;}
-  const parts=rows.map((a,i)=>`<div style="page-break-after:${i<rows.length-1?'always':'auto'}">${circularBody(a)}</div>`).join('');
-  w.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Circulares de Renovação (${rows.length})</title>
-  <style>${CIRC_CSS}</style></head><body>
-  <div class="noprint"><button onclick="window.print()">🖨️ Imprimir / Salvar todos em PDF</button></div>
-  ${parts}</body></html>`);
-  w.document.close();
-  toast(`${rows.length} documento(s) gerado(s)`);
-}
+/* contrato/circular movido para circular.js */
 /* ================= WHATSAPP ================= */
 function sendWhats(id){
   const a=state.alunos.find(x=>x.id===id);if(!a)return;
