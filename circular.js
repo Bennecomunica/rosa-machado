@@ -256,7 +256,7 @@ function circularBody(a){var parc=Number(state.config&&state.config.parcelas)||1
 
     <div class="sigline">
       <div class="ln">__________________________________________________</div>
-      <div class="cap">Assinatura do Responsável<span class="gap"></span>Data: ____ / ____ / 2027</div>
+      <div class="cap">Assinatura do Responsável<span class="gap"></span>Data: ____ / ____ / 2026</div>
     </div>
   </div>
 </div>`;}
